@@ -1,6 +1,5 @@
 <?php
 
-
 class Console {
 
     private $foreground_colors = [],
@@ -34,18 +33,18 @@ class Console {
         $this->background_colors['lgray'] = '47';
     }
 
-    public function __log($title = null, $subtitle = null) {
-        echo PHP_EOL . self::color("[Лог] > " . date("D.m.y, H:i:s") . "> ", "blue") . self::color($title, "white");
+    public function log($title = null, $subtitle = null) {
+        echo PHP_EOL . self::color("[Лог] > " . date("d.m.y, H:i:s") . "> ", "blue") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
-    public function __error($title = null, $subtitle = null) {
-        echo PHP_EOL . self::color("[Ошибка] > " . date("D.m.y, H:i:s") . "> ", "red") . self::color($title, "white");
+    public function error($title = null, $subtitle = null) {
+        echo PHP_EOL . self::color("[Ошибка] > " . date("d.m.y, H:i:s") . "> ", "red") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
-    public function __warning($title = null, $subtitle = null) {
-        echo PHP_EOL . self::color("[Предупреждение] > " . date("D.m.y, H:i:s") . "> ", "yellow") . self::color($title, "white");
+    public function warning($title = null, $subtitle = null) {
+        echo PHP_EOL . self::color("[Предупреждение] > " . date("d.m.y, H:i:s") . "> ", "yellow") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
