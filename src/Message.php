@@ -2,12 +2,26 @@
 
 class Message {
 
-    public $bot, $keyboard = [];
+    public $bot, $keyboard = [], $buttons = [];
+    const red = 'negative';
+    const green = 'positive';
+    const white = 'default';
+    const blue = 'primary';
 
+    /**
+     * Message constructor.
+     * @param Control $bot
+     */
     public function __construct(Control $bot) {
         $this->bot = $bot;
     }
 
+    /**
+     * @param string $message
+     * @param int $peer_id
+     * @param array $params
+     * @return array
+     */
     public function sendMessage(string $message, int $peer_id, array $params = []) {
         $ms = [];
         $ms["random_id"] = time();
@@ -17,9 +31,15 @@ class Message {
         if (isset($params["keyboard"])) $ms["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
         if (isset($params["forward_messages"])) $ms["forward_messages"] = $params["forward_messages"];
         $this->bot->console->debug("Сообщение отправлено", $message);
+        unset($this->keyboard, $this->buttons);
         return $this->bot->api("messages.send", $ms);
     }
 
+    /**
+     * @param $uid
+     * @param $message
+     * @return string|string[]
+     */
     private function replaceNameToMessage($uid, $message) {
         return str_replace(
             ["{fname}", "{lname}", "{afname}", "{alname}", "{fullname}", "{afullname}"],
@@ -34,8 +54,43 @@ class Message {
         );
     }
 
+    /**
+     * @param int $user_id
+     * @param string $name_case
+     * @return mixed
+     */
     public function getInfo(int $user_id, string $name_case = "") {
         return $this->bot->api("users.get", ["user_ids" => $user_id, "name_case" => $name_case])[0];
+    }
+
+    /**
+     * @param array $keyboard
+     */
+    public function addKeyboard(array $keyboard = []) {
+        foreach ($keyboard as $kfd => $kv) $this->buttons[] = $kv;
+        $this->keyboard = ['one_time' => false, 'buttons' => $this->buttons];
+    }
+
+    /**
+     * @param string $text
+     * @param string $color
+     * @return array
+     */
+    public function addButton(string $text, $color = self::white) {
+        return [
+            'action' => [
+                'type' => 'text',
+                'payload' => json_encode(1, JSON_UNESCAPED_UNICODE),
+                'label' => $text],
+            'color' => $color
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getKeyboard() {
+        return $this->keyboard;
     }
 
 }

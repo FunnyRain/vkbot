@@ -4,6 +4,10 @@ class Console {
 
     public $bot, $foreground_colors = [], $background_colors = [];
 
+    /**
+     * Console constructor.
+     * @param Control $bot
+     */
     public function __construct(Control $bot) {
         $this->bot = $bot;
         $this->foreground_colors = [
@@ -36,21 +40,37 @@ class Console {
         ];
     }
 
+    /**
+     * @param null $title
+     * @param null $subtitle
+     */
     public function log($title = null, $subtitle = null) {
         echo PHP_EOL . self::color("[Лог] > " . date("d.m.y, H:i:s") . "> ", "blue") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
+    /**
+     * @param null $title
+     * @param null $subtitle
+     */
     public function error($title = null, $subtitle = null) {
         echo PHP_EOL . self::color("[Ошибка] > " . date("d.m.y, H:i:s") . "> ", "red") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
+    /**
+     * @param null $title
+     * @param null $subtitle
+     */
     public function warning($title = null, $subtitle = null) {
         echo PHP_EOL . self::color("[Предупреждение] > " . date("d.m.y, H:i:s") . "> ", "yellow") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
+    /**
+     * @param null $title
+     * @param null $subtitle
+     */
     public function debug($title = null, $subtitle = null) {
         if ($this->bot->debug == 1) {
             echo PHP_EOL . self::color("[Дебаг] > " . date("d.m.y, H:i:s") . "> ", "purple") . self::color($title, "white");
@@ -58,6 +78,12 @@ class Console {
         }
     }
 
+    /**
+     * @param $string
+     * @param null $foreground_color
+     * @param null $background_color
+     * @return string
+     */
     public function color($string, $foreground_color = null, $background_color = null) {
         $colored_string = "";
         if (isset($this->foreground_colors[$foreground_color])) {

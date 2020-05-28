@@ -34,9 +34,16 @@ class Control {
         203 => "Доступ к сообществу запрещён.",
         300 => "Альбом переполнен.",
         3300 => "Recaptcha needed.",
-        3609 => "Token extensions required."
+        3609 => "Token extensions required.",
+        911 => "Keyboard format is invalid"
     ];
 
+    /**
+     * Control constructor.
+     * @param string $token
+     * @param int $group_id
+     * @param float $v
+     */
     public function __construct(string $token, int $group_id, float $v = 5.102) {
         $this->token = $token;
         $this->group_id = $group_id;
@@ -44,6 +51,8 @@ class Control {
         $this->console = new Console($this);
         $this->message = new Message($this);
     }
+
+    public function debug() { $this->debug = 1; }
 
     public function start() {
         $getArray = $this->getRequest();
@@ -60,6 +69,10 @@ class Control {
         }
     }
 
+    /**
+     * @param string $url
+     * @return mixed
+     */
     public function call(string $url) {
         if (function_exists("curl_init")) $sendRequest = $this->curl_post($url); else $sendRequest = file_get_contents($url);
         $sendRequest = json_decode($sendRequest, 1);
@@ -78,12 +91,18 @@ class Control {
         return $sendRequest;
     }
 
+    /**
+     * @return array
+     */
     public function getLongPollServer() {
         $ms = [];
         $ms["group_id"] = $this->group_id;
         return $this->api("groups.getLongPollServer", $ms);
     }
 
+    /**
+     * @return mixed
+     */
     public function getRequest() {
         $url = json_decode(@file_get_contents($this->lp["url"]), 1);
         if (isset($url["updates"])) {
@@ -99,6 +118,11 @@ class Control {
         }
     }
 
+    /**
+     * @param string $method
+     * @param array $params
+     * @return array
+     */
     public function api(string $method = '', array $params = []) {
         $params["v"] = $this->v;
         $params["access_token"] = $this->token;
@@ -107,10 +131,19 @@ class Control {
         return (array)$this->call($url);
     }
 
+    /**
+     * @param $method
+     * @param string $params
+     * @return string
+     */
     private function http_build_query($method, $params = '') {
         return "https://api.vk.com/method/{$method}?{$params}";
     }
 
+    /**
+     * @param $url
+     * @return bool|string
+     */
     private function curl_post($url) {
         if (!function_exists('curl_init')) return false;
         $param = parse_url($url);
