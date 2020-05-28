@@ -34,7 +34,8 @@ while (true) {
             [$bot->message->addButton("kb2", $color['green']), $bot->message->addButton("kb4", $color['blue'])]
         ));
         // пример отправки сообщения с кнопкой
-        $bot->message->sendMessage("Кнопка отправлена!", $peer_id, ["keyboard" => $bot->message->getKeyboard()]);
+        $bot->message->sendMessage("{fname} {lname} Кнопка отправлена!", $peer_id, ["keyboard" => $bot->message->getKeyboard(), "uid" => $from_id]);
+        // на данный момент, параметр "uid" => $from_id нужен для работоспособности бота в беседе, скоро исправлю!
         ////////////////////////
     }
 }
