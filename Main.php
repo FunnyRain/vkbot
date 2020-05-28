@@ -27,7 +27,6 @@ while (true) {
         $bot->debug();
         ////////////////////////
         /* ТУТ ВАШ КОД */
-
         // пример создания кнопки
         $bot->message->addKeyboard(array(
             [$bot->message->addButton("kb1", $color['red']), $bot->message->addButton("kb2", $color['white'])],
