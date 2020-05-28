@@ -2,9 +2,7 @@
 
 class Console {
 
-    private Control $bot;
-    private array $foreground_colors = [];
-    private array $background_colors = [];
+    public $bot, $foreground_colors = [], $background_colors = [];
 
     public function __construct(Control $bot) {
         $this->bot = $bot;

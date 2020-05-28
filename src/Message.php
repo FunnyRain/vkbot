@@ -2,7 +2,7 @@
 
 class Message {
 
-    public Control $bot;
+    public $bot, $keyboard = [];
 
     public function __construct(Control $bot) {
         $this->bot = $bot;
@@ -14,7 +14,7 @@ class Message {
         $ms["peer_id"] = $peer_id;
         $ms["message"] = ($peer_id <= 2000000000) ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($params["uid"], $message);
         if (isset($params["attachment"])) $ms["attachment"] = $params["attachment"];
-        if (isset($params["keyboard"])) $ms["keyboard"] = $params["keyboard"];
+        if (isset($params["keyboard"])) $ms["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
         if (isset($params["forward_messages"])) $ms["forward_messages"] = $params["forward_messages"];
         $this->bot->console->debug("Сообщение отправлено", $message);
         return $this->bot->api("messages.send", $ms);
