@@ -5,11 +5,11 @@ require_once "autoload.php";
 ini_set('display_errors', 1);
 date_default_timezone_set('Europe/Moscow');
 
+$mid = [];
 $bot = new Control(
     "токен",
     "айди группы"
 );
-$mid = [];
 
 while (true) {
     $bot->start();
