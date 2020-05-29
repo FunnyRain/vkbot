@@ -85,10 +85,10 @@ class Message {
     /**
      * @param string $text
      * @param string $color
-     * @param int $payload
+     * @param string $payload
      * @return array
      */
-    public function addButton(string $text, $color = self::white, $payload = 1) {
+    public function addButton(string $text, $color = self::white, string $payload = "") {
         return [
             'action' => [
                 'type' => 'text',
@@ -101,7 +101,6 @@ class Message {
     /**
      * @param string $text
      * @param null $link
-     * @param int $payload
      * @return array
      */
     public function addButtonLink(string $text, $link = null) {

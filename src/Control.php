@@ -88,6 +88,13 @@ class Control {
     }
 
     /**
+     * @return string|null
+     */
+    public function getPayload() {
+        return isset($this->get["payload"]) ? (string) str_replace(['"',"'"], '', $this->get["payload"]) : null;
+    }
+
+    /**
      * Debug mode
      */
     public function debug() {
