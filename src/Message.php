@@ -104,11 +104,10 @@ class Message {
      * @param int $payload
      * @return array
      */
-    public function addButtonLink(string $text, $link = null, $payload = 1) {
+    public function addButtonLink(string $text, $link = null) {
         return [
             'action' => [
                 'type' => 'open_link',
-                'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
                 'link' => $link,
                 'label' => $text]
         ];
