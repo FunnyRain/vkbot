@@ -2,8 +2,16 @@
 
 class Control {
 
-    public $token, $source_path = __DIR__, $group_id, $lp = [], $console, $message, $v,
-        $get, $debug = 0;
+    public
+        $token,
+        $source_path = __DIR__,
+        $group_id,
+        $lp = [],
+        $console,
+        $message,
+        $v,
+        $get,
+        $debug = 0;
 
     const ERRORS = [
         1 => "Произошла неизвестная ошибка.",
@@ -53,10 +61,22 @@ class Control {
     }
 
     /**
+     * @return array|null
+     */
+    public function getAction() {
+        return isset($this->get["action"]) ? (array) $this->get["action"] : null;
+    }
+
+    /**
      * @return string|null
      */
     public function getMessage() {
-        return isset($this->get["text"]) ? (string) $this->get["text"] : null;
+        if (isset($this->get["text"])){
+            if (mb_strpos($this->get["text"], '] ')) {
+                // пока-что так
+                return (string) explode('] ', $this->get["text"])[1];
+            } else return (string) $this->get["text"];
+        } else return null;
     }
 
     /**
@@ -97,8 +117,10 @@ class Control {
     /**
      * Debug mode
      */
-    public function debug() {
-        $this->debug = 1;
+    public function debug($ok = 1) {
+        ini_set('display_errors', 1);
+        date_default_timezone_set('Europe/Moscow');
+        $this->debug = $ok;
     }
 
     public function start() {

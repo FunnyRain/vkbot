@@ -2,7 +2,10 @@
 
 class Message {
 
-    public $bot, $keyboard = [], $buttons = [];
+    public
+        $bot,
+        $keyboard = [],
+        $buttons = [];
     const red = 'negative';
     const green = 'positive';
     const white = 'default';
@@ -42,7 +45,7 @@ class Message {
      * @param $message
      * @return string|string[]
      */
-    private function replaceNameToMessage($uid, $message) {
+    public function replaceNameToMessage($uid, $message) {
         return str_replace(
             ["{fname}", "{lname}", "{afname}", "{alname}", "{fullname}", "{afullname}"],
             [

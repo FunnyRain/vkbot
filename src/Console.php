@@ -2,7 +2,10 @@
 
 class Console {
 
-    public $bot, $foreground_colors = [], $background_colors = [];
+    public
+        $bot,
+        $foreground_colors = [],
+        $background_colors = [];
 
     /**
      * Console constructor.
