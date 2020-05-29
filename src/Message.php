@@ -18,23 +18,22 @@ class Message {
 
     /**
      * @param string $message
-     * @param int $peer_id
-     * @param int $from_id
+     * @param int|null $peer_id
+     * @param int|null $from_id
      * @param array $params
      * @return array
      */
     public function sendMessage(string $message = "", int $peer_id = null, int $from_id = null, array $params = []) {
         if (!is_null($peer_id)) {
-            $ms = [];
-            $ms["random_id"] = time();
-            $ms["peer_id"] = $peer_id;
-            $ms["message"] = ($peer_id <= 2000000000) ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($from_id, $message);
-            if (isset($params["attachment"])) $ms["attachment"] = $params["attachment"];
-            if (isset($params["keyboard"])) $ms["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
-            if (isset($params["forward_messages"])) $ms["forward_messages"] = $params["forward_messages"];
+            $params["random_id"] = rand();
+            $params["peer_id"] = $peer_id;
+            $params["message"] = ($peer_id <= 2000000000) ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($from_id, $message);
+            $params["attachment"] = isset($params["attachment"]) ? $params["attachment"] : null;
+            $params["forward_messages"] = isset($params["forward_messages"]) ? $params["forward_messages"] : null;
+            if (isset($params["keyboard"])) $params["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
             $this->bot->console->debug("Сообщение отправлено", $message);
             unset($this->keyboard, $this->buttons);
-            return $this->bot->api("messages.send", $ms);
+            return $this->bot->api("messages.send", $params);
         }
     }
 
@@ -102,7 +101,6 @@ class Message {
     /**
      * @param string $text
      * @param null $link
-     * @param string $color
      * @param int $payload
      * @return array
      */
