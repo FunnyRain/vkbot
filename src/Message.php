@@ -66,23 +66,41 @@ class Message {
     /**
      * @param array $keyboard
      */
-    public function addKeyboard(array $keyboard = []) {
+    public function addKeyboard(array $keyboard = [], $one_time = false, $inline = false) {
         foreach ($keyboard as $kfd => $kv) $this->buttons[] = $kv;
-        $this->keyboard = ['one_time' => false, 'buttons' => $this->buttons];
+        $this->keyboard = ['one_time' => $one_time, 'inline' => $inline, 'buttons' => $this->buttons];
     }
 
     /**
      * @param string $text
      * @param string $color
+     * @param int $payload
      * @return array
      */
-    public function addButton(string $text, $color = self::white) {
+    public function addButton(string $text, $color = self::white, $payload = 1) {
         return [
             'action' => [
                 'type' => 'text',
-                'payload' => json_encode(1, JSON_UNESCAPED_UNICODE),
+                'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
                 'label' => $text],
             'color' => $color
+        ];
+    }
+
+    /**
+     * @param string $text
+     * @param null $link
+     * @param string $color
+     * @param int $payload
+     * @return array
+     */
+    public function addButtonLink(string $text, $link = null, $payload = 1) {
+        return [
+            'action' => [
+                'type' => 'open_link',
+                'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+                'link' => $link,
+                'label' => $text]
         ];
     }
 
