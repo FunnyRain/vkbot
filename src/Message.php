@@ -19,20 +19,23 @@ class Message {
     /**
      * @param string $message
      * @param int $peer_id
+     * @param int $from_id
      * @param array $params
      * @return array
      */
-    public function sendMessage(string $message, int $peer_id, array $params = []) {
-        $ms = [];
-        $ms["random_id"] = time();
-        $ms["peer_id"] = $peer_id;
-        $ms["message"] = ($peer_id <= 2000000000) ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($params["uid"], $message);
-        if (isset($params["attachment"])) $ms["attachment"] = $params["attachment"];
-        if (isset($params["keyboard"])) $ms["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
-        if (isset($params["forward_messages"])) $ms["forward_messages"] = $params["forward_messages"];
-        $this->bot->console->debug("Сообщение отправлено", $message);
-        unset($this->keyboard, $this->buttons);
-        return $this->bot->api("messages.send", $ms);
+    public function sendMessage(string $message = "", int $peer_id = null, int $from_id = null, array $params = []) {
+        if (!is_null($peer_id)) {
+            $ms = [];
+            $ms["random_id"] = time();
+            $ms["peer_id"] = $peer_id;
+            $ms["message"] = ($peer_id <= 2000000000) ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($from_id, $message);
+            if (isset($params["attachment"])) $ms["attachment"] = $params["attachment"];
+            if (isset($params["keyboard"])) $ms["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
+            if (isset($params["forward_messages"])) $ms["forward_messages"] = $params["forward_messages"];
+            $this->bot->console->debug("Сообщение отправлено", $message);
+            unset($this->keyboard, $this->buttons);
+            return $this->bot->api("messages.send", $ms);
+        }
     }
 
     /**
@@ -65,10 +68,19 @@ class Message {
 
     /**
      * @param array $keyboard
+     * @param bool $one_time
+     * @param bool $inline
      */
-    public function addKeyboard(array $keyboard = [], $one_time = false, $inline = false) {
+    public function addKeyboard(array $keyboard = [], bool $one_time = false, bool $inline = false) {
         foreach ($keyboard as $kfd => $kv) $this->buttons[] = $kv;
         $this->keyboard = ['one_time' => $one_time, 'inline' => $inline, 'buttons' => $this->buttons];
+    }
+
+    /**
+     * @return array
+     */
+    public function remKeyboard() {
+        return ['one_time' => true, 'buttons' => []];
     }
 
     /**
