@@ -64,18 +64,18 @@ class Control {
      * @return array|null
      */
     public function getAction() {
-        return isset($this->get["action"]) ? (array) $this->get["action"] : null;
+        return isset($this->get["action"]) ? (array)$this->get["action"] : null;
     }
 
     /**
      * @return string|null
      */
     public function getMessage() {
-        if (isset($this->get["text"])){
+        if (isset($this->get["text"])) {
             if (mb_strpos($this->get["text"], '] ')) {
                 // пока-что так
-                return (string) explode('] ', $this->get["text"])[1];
-            } else return (string) $this->get["text"];
+                return (string)explode('] ', $this->get["text"])[1];
+            } else return (string)$this->get["text"];
         } else return null;
     }
 
@@ -83,42 +83,42 @@ class Control {
      * @return int|null
      */
     public function getFromId() {
-        return isset($this->get["from_id"]) ? (int) $this->get["from_id"] : null;
+        return isset($this->get["from_id"]) ? (int)$this->get["from_id"] : null;
     }
 
     /**
      * @return int|null
      */
     public function getPeerId() {
-        return isset($this->get["peer_id"]) ? (int) $this->get["peer_id"] : null;
+        return isset($this->get["peer_id"]) ? (int)$this->get["peer_id"] : null;
     }
 
     /**
      * @return int|null
      */
     public function getMessageId() {
-        return isset($this->get["conversation_message_id"]) ? (int) $this->get["conversation_message_id"] : null;
+        return isset($this->get["conversation_message_id"]) ? (int)$this->get["conversation_message_id"] : null;
     }
 
     /**
      * @return array|null
      */
     public function getAttachment() {
-        return isset($this->get["attachments"]) ? (array) $this->get["attachments"] : null;
+        return isset($this->get["attachments"]) ? (array)$this->get["attachments"] : null;
     }
 
     /**
      * @return string|null
      */
     public function getPayload() {
-        return isset($this->get["payload"]) ? (string) str_replace(['"',"'"], '', $this->get["payload"]) : null;
+        return isset($this->get["payload"]) ? (string)str_replace(['"', "'"], '', $this->get["payload"]) : null;
     }
 
     /**
      * Debug mode
      */
     public function debug($ok = 1) {
-        ini_set('display_errors', 1);
+        ini_set('display_errors', $ok);
         date_default_timezone_set('Europe/Moscow');
         $this->debug = $ok;
     }
@@ -143,7 +143,10 @@ class Control {
      * @return mixed
      */
     public function call(string $url) {
-        if (function_exists("curl_init")) $sendRequest = $this->curl_post($url); else $sendRequest = file_get_contents($url);
+        if (function_exists("curl_init"))
+            $sendRequest = $this->curl_post($url);
+        else
+            $sendRequest = file_get_contents($url);
         $sendRequest = json_decode($sendRequest, 1);
         if (isset($sendRequest["error"])) {
             $error = $sendRequest["error"]["error_code"];
@@ -164,9 +167,7 @@ class Control {
      * @return array
      */
     public function getLongPollServer() {
-        $ms = [];
-        $ms["group_id"] = $this->group_id;
-        return $this->api("groups.getLongPollServer", $ms);
+        return $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
     }
 
     /**
@@ -201,20 +202,20 @@ class Control {
     }
 
     /**
-     * @param $method
+     * @param string $method
      * @param string $params
      * @return string
      */
-    private function http_build_query($method, $params = '') {
+    private function http_build_query(string $method, string $params = '') {
         return "https://api.vk.com/method/{$method}?{$params}";
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @return bool|string
      */
-    private function curl_post($url) {
-        if (!function_exists('curl_init')) return false;
+    private function curl_post(string $url) {
+        if (!function_exists("curl_init")) return false;
         $param = parse_url($url);
         if ($curl = curl_init()) {
             curl_setopt($curl, CURLOPT_URL, $param["scheme"] . "://" . $param["host"] . $param["path"]);

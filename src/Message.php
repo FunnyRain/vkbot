@@ -41,11 +41,11 @@ class Message {
     }
 
     /**
-     * @param $uid
-     * @param $message
+     * @param int $uid
+     * @param string $message
      * @return string|string[]
      */
-    public function replaceNameToMessage($uid, $message) {
+    public function replaceNameToMessage(int $uid, string $message) {
         return str_replace(
             ["{fname}", "{lname}", "{afname}", "{alname}", "{fullname}", "{afullname}"],
             [
@@ -91,7 +91,7 @@ class Message {
      * @param string $payload
      * @return array
      */
-    public function addButton(string $text, $color = self::white, string $payload = "") {
+    public function addButton(string $text, string $color = self::white, string $payload = "") {
         return [
             'action' => [
                 'type' => 'text',

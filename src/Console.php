@@ -44,37 +44,37 @@ class Console {
     }
 
     /**
-     * @param null $title
-     * @param null $subtitle
+     * @param string $title
+     * @param string|null $subtitle
      */
-    public function log($title = null, $subtitle = null) {
+    public function log(string $title = "", string $subtitle = null) {
         echo PHP_EOL . self::color("[Лог] > " . date("d.m.y, H:i:s") . "> ", "blue") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
     /**
-     * @param null $title
-     * @param null $subtitle
+     * @param string $title
+     * @param string $subtitle
      */
-    public function error($title = null, $subtitle = null) {
+    public function error(string $title = "", string $subtitle = null) {
         echo PHP_EOL . self::color("[Ошибка] > " . date("d.m.y, H:i:s") . "> ", "red") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
     /**
-     * @param null $title
-     * @param null $subtitle
+     * @param string $title
+     * @param string $subtitle
      */
-    public function warning($title = null, $subtitle = null) {
+    public function warning(string $title = "", string $subtitle = null) {
         echo PHP_EOL . self::color("[Предупреждение] > " . date("d.m.y, H:i:s") . "> ", "yellow") . self::color($title, "white");
         if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "green");
     }
 
     /**
-     * @param null $title
-     * @param null $subtitle
+     * @param string $title
+     * @param string $subtitle
      */
-    public function debug($title = null, $subtitle = null) {
+    public function debug(string $title = "", string $subtitle = null) {
         if ($this->bot->debug == 1) {
             echo PHP_EOL . self::color("[Дебаг] > " . date("d.m.y, H:i:s") . "> ", "purple") . self::color($title, "white");
             if (!is_null($subtitle)) echo PHP_EOL . "\t" . self::color($subtitle, "light_purple");
@@ -82,12 +82,12 @@ class Console {
     }
 
     /**
-     * @param $string
-     * @param null $foreground_color
-     * @param null $background_color
+     * @param string $string
+     * @param string $foreground_color
+     * @param string $background_color
      * @return string
      */
-    public function color($string, $foreground_color = null, $background_color = null) {
+    public function color(string $string, string $foreground_color = null, string $background_color = null) {
         $colored_string = "";
         if (isset($this->foreground_colors[$foreground_color])) {
             $colored_string .= "\033[" . $this->foreground_colors[$foreground_color] . "m";
