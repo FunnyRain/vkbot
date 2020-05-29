@@ -13,28 +13,48 @@ $bot = new Control(
 
 while (true) {
     $bot->start();
-    $text = isset($bot->get["text"]) ? $bot->get["text"] : null;
-    $from_id = isset($bot->get["from_id"]) ? $bot->get["from_id"] : null;
-    $peer_id = isset($bot->get["peer_id"]) ? $bot->get["peer_id"] : null;
-    $message_id = isset($bot->get["conversation_message_id"]) ? $bot->get["conversation_message_id"] : null;
-    $attachments = isset($bot->get["attachments"]) ? $bot->get["attachments"] : null;
+    $text = $bot->getMessage();
+    $from_id = $bot->getFromId();
+    $peer_id = $bot->getPeerId();
+    $message_id = $bot->getMessageId();
+    $attachments = $bot->getAttachment();
     $color = new ReflectionClass("Message");
     $color = $color->getConstants();
     if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
     if (!in_array($message_id, $mid[$peer_id])) {
         $mid[$peer_id][] = $message_id;
         $bot->console->log("{$from_id} => {$text}");
-        $bot->debug();
+        // $bot->debug();
         ////////////////////////
+
         /* ТУТ ВАШ КОД */
-        // пример создания кнопки
-        $bot->message->addKeyboard(array(
-            [$bot->message->addButton("kb1", $color['red']), $bot->message->addButton("kb2", $color['white'])],
-            [$bot->message->addButton("kb2", $color['green']), $bot->message->addButton("kb4", $color['blue'])]
-        ));
-        // пример отправки сообщения с кнопкой
-        $bot->message->sendMessage("{fname} {lname} Кнопка отправлена!", $peer_id, ["keyboard" => $bot->message->getKeyboard(), "uid" => $from_id]);
-        // на данный момент, параметр "uid" => $from_id нужен для работоспособности бота в беседе, скоро исправлю!
+        $msg = explode(" ", mb_strtolower($text));
+        switch ($msg[0]) {
+            case "q":
+                /**
+                 * простое приветствие
+                 */
+                $bot->message->sendMessage("{fname}, привет!", $peer_id, $from_id);
+                break;
+            case "keyboard":
+                /**
+                 * при вызове команды, создаются все виды кнопок
+                 */
+                $bot->message->addKeyboard([
+                    [$bot->message->addButton("белая"), $bot->message->addButton("красная", $color['red'])],
+                    [$bot->message->addButton("зеленая", $color['green']), $bot->message->addButton("голубая", $color['blue'])],
+                    [$bot->message->addButtonLink("ссылка", "https://vk.com/id1")]
+                ]);
+                $bot->message->sendMessage("все кнопочки", $peer_id, $from_id, ["keyboard" => $bot->message->getKeyboard()]);
+                break;
+            default:
+                /**
+                 * неизвестная команда
+                 */
+                $bot->message->sendMessage("{fname}, такой команды не существует!", $peer_id, $from_id);
+                break;
+        }
+
         ////////////////////////
     }
 }

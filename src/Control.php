@@ -52,7 +52,47 @@ class Control {
         $this->message = new Message($this);
     }
 
-    public function debug() { $this->debug = 1; }
+    /**
+     * @return string|null
+     */
+    public function getMessage() {
+        return isset($this->get["text"]) ? (string) $this->get["text"] : null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getFromId() {
+        return isset($this->get["from_id"]) ? (int) $this->get["from_id"] : null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPeerId() {
+        return isset($this->get["peer_id"]) ? (int) $this->get["peer_id"] : null;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMessageId() {
+        return isset($this->get["conversation_message_id"]) ? (int) $this->get["conversation_message_id"] : null;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getAttachment() {
+        return isset($this->get["attachments"]) ? (array) $this->get["attachments"] : null;
+    }
+
+    /**
+     * Debug mode
+     */
+    public function debug() {
+        $this->debug = 1;
+    }
 
     public function start() {
         $getArray = $this->getRequest();
