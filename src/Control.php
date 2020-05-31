@@ -74,8 +74,10 @@ class Control {
             if (mb_strpos($this->get["text"], '] ')) {
                 // пока-что так
                 return (string)explode('] ', $this->get["text"])[1];
-            } else return (string)$this->get["text"];
-        } else return null;
+            }
+            return (string)$this->get["text"];
+        }
+        return null;
     }
 
     /**
