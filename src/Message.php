@@ -77,9 +77,9 @@ class Message {
 	 * @param bool $inline
 	 */
 	public function addKeyboard(array $keyboard = [], bool $one_time = false, bool $inline = false) {
-	        foreach ($keyboard as $kfd => $kv){
-                        $this->buttons[] = $kv;
-                }
+		foreach ($keyboard as $kfd => $kv) {
+			$this->buttons[] = $kv;
+		}
 		$this->keyboard = ['one_time' => $one_time, 'inline' => $inline, 'buttons' => $this->buttons];
 	}
 
