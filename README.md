@@ -6,11 +6,11 @@
   - Работа с конфигом
   - Обработка событий
   - Загрузка документов
+  - Обработка стены сообщества (Получение сообщения с комметариев)
 
 ### Что планируется?
 
   - Рассылка сообщений
-  - Обработка стены сообщества (Получение сообщения с комметариев)
 
 ### Примеры
 
@@ -20,6 +20,7 @@
   - [Работа с конфигом](https://github.com/FunnyRain/vkbot#%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B-%D1%81-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D0%BE%D0%BC)
   - [Обработка событий](https://github.com/FunnyRain/vkbot#%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9-%D0%B2-%D0%B1%D0%B5%D1%81%D0%B5%D0%B4%D0%B0%D1%85)
   - [Загрузка документов](https://github.com/FunnyRain/vkbot#%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8-%D1%84%D0%BE%D1%82%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D0%B8%D0%B8--%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D0%B8%D0%B7-%D0%B4%D0%B8%D1%80%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D0%B8%D0%B8)
+  - [Обработка стены сообщества]()
 
 ### Как установить?
 Пиши в консоль:
@@ -255,6 +256,36 @@ while (true) {
                 ]
             ]);
         }
+    }
+}
+```
+###### Простой пример получения комментария и ответа на него
+```php
+require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
+$wall = [];
+$bot = new Control(
+    "токен",
+    "айди группы (цифрами)"
+);
+while (true) {
+    $bot->start(); // активируем LongPoll
+    $comment_message = $bot->wall->getMessage();
+    $comment_postid = $bot->wall->getPostId();
+    $comment_id = $bot->wall->getCommentId();
+    $bot->debug(1);
+    if (!isset($wall[$comment_postid])) $wall[$comment_postid][] = -1;
+    if (!in_array($comment_id, $wall[$comment_postid])) {
+
+        $wall[$comment_postid][] = $comment_id;
+        if ($comment_message == "test") {
+            $bot->wall->sendComment("* {fname} - имя
+            * {lname} - фамилия
+            * {fullname} - имя и фамилия
+            * {afname} - имя в виде ссылки  (т.е кликабельное)
+            * {alname} - фамилия в виде ссылки (т.е кликабельное)
+            * {afullname} - имя и фамилия в виде ссылки (т.е кликабельное)");
+        }
+
     }
 }
 ```
