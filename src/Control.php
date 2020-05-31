@@ -115,6 +115,7 @@ class Control {
 
     /**
      * Debug mode
+     * @param int $ok
      */
     public function debug($ok = 1) {
         ini_set('display_errors', $ok);
@@ -176,7 +177,6 @@ class Control {
         $url = json_decode(@file_get_contents($this->lp["url"]), 1);
         if (isset($url["updates"]))
             return json_decode(file_get_contents($this->lp["url"]), 1);
-	    
         $result = $this->getLongPollServer();
         $ts = $result["ts"];
         $key = $result["key"];
