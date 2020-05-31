@@ -174,17 +174,16 @@ class Control {
      */
     public function getRequest() {
         $url = json_decode(@file_get_contents($this->lp["url"]), 1);
-        if (isset($url["updates"])) {
+        if (isset($url["updates"]))
             return json_decode(file_get_contents($this->lp["url"]), 1);
-        } else {
-            $result = $this->getLongPollServer();
-            $ts = $result["ts"];
-            $key = $result["key"];
-            $server = $result["server"];
-            $this->lp["url"] = "{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=8&version=3";
-            $this->console->log("Ссылка лонгпулла обновлена");
-            return json_decode(file_get_contents($this->lp["url"]), 1);
-        }
+	    
+        $result = $this->getLongPollServer();
+        $ts = $result["ts"];
+        $key = $result["key"];
+        $server = $result["server"];
+        $this->lp["url"] = "{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=8&version=3";
+        $this->console->log("Ссылка лонгпулла обновлена");
+        return json_decode(file_get_contents($this->lp["url"]), 1);
     }
 
     /**
