@@ -29,11 +29,12 @@ class Message {
 		if (!is_null($peer_id)) {
 			$params["random_id"] = rand();
 			$params["peer_id"] = $peer_id;
-			$params["message"] = ($peer_id <= 2000000000) ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($from_id, $message);
-			if (is_array($params["attachment"]))
+			$params["message"] = $peer_id <= 2000000000 ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($from_id, $message);
+			if (is_array($params["attachment"])){
 				$params["attachment"] = implode(",",$params["attachment"]);
-			else
+			}else{
 				$params["attachment"] = isset($params["attachment"]) ? $params["attachment"] : null;
+                        }
 			$params["forward_messages"] = isset($params["forward_messages"]) ? $params["forward_messages"] : null;
 			if (isset($params["keyboard"])) $params["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
 			$this->bot->console->debug("{$peer_id}> Сообщение отправлено", !empty($message) ? $message : null);
@@ -76,7 +77,9 @@ class Message {
 	 * @param bool $inline
 	 */
 	public function addKeyboard(array $keyboard = [], bool $one_time = false, bool $inline = false) {
-		foreach ($keyboard as $kfd => $kv) $this->buttons[] = $kv;
+	        foreach ($keyboard as $kfd => $kv){
+                        $this->buttons[] = $kv;
+                }
 		$this->keyboard = ['one_time' => $one_time, 'inline' => $inline, 'buttons' => $this->buttons];
 	}
 
@@ -160,7 +163,7 @@ class Message {
 	 */
 	public function uploadPhoto(string $src) {
 		if (!file_exists($src)) {
-			$this->bot->console->error("Загрузка фотографии не возможна!", "Неверный путь");
+			$this->bot->console->error("Загрузка фотографии невозможна!", "Неверный путь");
 		} else {
 			$server = $this->getMessagesUploadServer();
 			$file = new CURLFile(realpath($src));
