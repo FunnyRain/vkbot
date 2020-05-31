@@ -8,6 +8,7 @@ class Control {
     public $lp = [];
     public $console;
     public $message;
+    public $wall;
     public $v;
     public $get;
     public $debug = 0;
@@ -42,7 +43,32 @@ class Control {
         300 => "Альбом переполнен.",
         3300 => "Recaptcha needed.",
         3609 => "Token extensions required.",
-        911 => "Keyboard format is invalid"
+        911 => "Keyboard format is invalid",
+        /** wall errors */
+        212 => "Access to post comments denied",
+        213 => "Нет доступа к комментированию записи",
+        222 => "Запрещено размещение ссылок в комментариях",
+        223 => "Превышен лимит комментариев на стене",
+        /** message errors */
+        900 => "Нельзя отправлять сообщение пользователю из черного списка",
+        901 => "Пользователь запретил отправку сообщений от имени сообщества",
+        902 => "Нельзя отправлять сообщения этому пользователю в связи с настройками приватности",
+        912 => "This is a chat bot feature, change this status in settings",
+        913 => "Слишком много пересланных сообщений",
+        914 => "Сообщение слишком длинное",
+        917 => "You don't have access to this chat",
+        921 => "Невозможно переслать выбранные сообщения",
+        925 => "You are not admin of this chat",
+        936 => "Contact not found",
+        940 => "Too many posts in messages",
+        943 => "Cannot use this intent",
+        944 => "Limits overflow for this intent",
+        945 => "Chat was disabled",
+        946 => "Chat not supported",
+        /** messages upload errors */
+        114 => "Недопустимый идентификатор альбома.",
+        118 => "Недопустимый сервер.",
+        121 => "Неверный хэш."
     ];
 
     /**
@@ -57,6 +83,7 @@ class Control {
         $this->v = $v;
         $this->console = new Console($this);
         $this->message = new Message($this);
+        $this->wall = new Wall($this);
     }
 
     /**
@@ -130,6 +157,9 @@ class Control {
                 switch ($get["type"]) {
                     case "message_new":
                         $this->get = $get["object"];
+                        break;
+                    case "wall_reply_new":
+                        $this->wall->object($get["object"]);
                         break;
                     default:
                         break;
