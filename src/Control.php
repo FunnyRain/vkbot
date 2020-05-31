@@ -2,16 +2,15 @@
 
 class Control {
 
-    public
-        $token,
-        $source_path = __DIR__,
-        $group_id,
-        $lp = [],
-        $console,
-        $message,
-        $v,
-        $get,
-        $debug = 0;
+    public $token;
+    public $source_path = __DIR__;
+	public $group_id;
+	public $lp = [];
+	public $console;
+	public $message;
+	public $v;
+	public $get;
+	public $debug = 0;
 
     const ERRORS = [
         1 => "Произошла неизвестная ошибка.",
