@@ -36,7 +36,7 @@ class Message {
 				$params["attachment"] = isset($params["attachment"]) ? $params["attachment"] : null;
 			$params["forward_messages"] = isset($params["forward_messages"]) ? $params["forward_messages"] : null;
 			if (isset($params["keyboard"])) $params["keyboard"] = json_encode($params["keyboard"], JSON_UNESCAPED_UNICODE);
-			$this->bot->console->debug("Сообщение отправлено", !empty($message) ? $message : null);
+			$this->bot->console->debug("{$peer_id}> Сообщение отправлено", !empty($message) ? $message : null);
 			unset($this->keyboard, $this->buttons);
 			return $this->bot->api("messages.send", $params);
 		}
@@ -125,10 +125,14 @@ class Message {
 	}
 
 	/**
+	 * @param string $type
 	 * @return mixed
 	 */
-	private function getMessagesUploadServer() {
-		return $this->bot->api("photos.getMessagesUploadServer", [])['upload_url'];
+	private function getMessagesUploadServer(string $type = "photos") {
+		if ($type === "docs") {
+			global $peer_id;
+			return $this->bot->api("{$type}.getMessagesUploadServer", ["type" => "doc", "peer_id" => $peer_id])["upload_url"];
+		} else return $this->bot->api("{$type}.getMessagesUploadServer", [])["upload_url"];
 	}
 
 	/**
@@ -167,6 +171,41 @@ class Message {
 			$data = json_decode(curl_exec($ch), 1);
 			curl_close($ch);
 			return $this->saveMessagesPhoto("test1", $data['hash'], $data['photo'], $data['server']);
+		}
+	}
+
+	/**
+	 * @param string $title
+	 * @param string $doc
+	 * @return string
+	 */
+	private function saveDoc(string $title, string $doc) {
+		$saveDoc = $this->bot->api("docs.save", [
+			"title" => $title,
+			"file" => $doc,
+		]);
+		if (!isset($saveDoc["error"])) {
+			return "doc" . $saveDoc["doc"]["owner_id"] . "_" . $saveDoc["doc"]["id"];
+		}
+	}
+
+	/**
+	 * @param string $src
+	 * @return string
+	 */
+	public function uploadDoc(string $src) {
+		if (!file_exists($src)) {
+			$this->bot->console->error("Загрузка документа не возможна!", "Неверный путь");
+		} else {
+			$server = $this->getMessagesUploadServer("docs");
+			$file = new CURLFile(realpath($src));
+			$ch = curl_init($server);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, array('file' => $file));
+			$data = json_decode(curl_exec($ch), 1);
+			curl_close($ch);
+			return $this->saveDoc("test1", $data['file']);
 		}
 	}
 

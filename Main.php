@@ -103,6 +103,15 @@ while (true) {
 					]
 				]);
 				break;
+			case "doc":
+				/** загрузка фотографии и документа из директории */
+				$bot->message->sendMessage("3 фотографии", $peer_id, $from_id, [
+					"attachment" => [
+						$bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
+						$bot->message->uploadDoc(__DIR__ . '/test.jpeg')
+					]
+				]);
+				break;
 			case "q":
 				/** простое приветствие */
 				$bot->message->sendMessage("{fname}, привет!", $peer_id, $from_id);
