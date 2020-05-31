@@ -5,11 +5,11 @@
   - Работа с кнопками
   - Работа с конфигом
   - Обработка событий
+  - Загрузка документов
 
 ### Что планируется?
 
   - Рассылка сообщений
-  - Загрузка документов
   - Обработка стены сообщества (Получение сообщения с комметариев)
 
 ### Примеры
@@ -210,6 +210,48 @@ while (true) {
             }
         }
 
+    }
+}
+```
+###### Простой пример загрузки Фотографии / Документа из директории
+```php
+require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
+$mid = [];
+$bot = new Control(
+    "токен",
+    "айди группы (цифрами)"
+);
+while (true) {
+    $bot->start(); // активируем LongPoll
+    $text = $bot->getMessage(); // получаем сообщение
+    $message_id = $bot->getMessageId();
+    $from_id = $bot->getFromId(); // получаем айди отправителя
+    $peer_id = $bot->getPeerId(); // получаем айди переписки
+    if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
+    if (!in_array($message_id, $mid[$peer_id])) {
+        $mid[$peer_id][] = $message_id;
+        if ($text == "photo") {
+            /** загрузка фотографии из директории */
+            $bot->message->sendMessage("1 фотография", $peer_id, $from_id, [
+                "attachment" => $bot->message->uploadPhoto(__DIR__ . '/test.jpeg')
+			]);
+			/** загрузка нескольких фотографий из директории */
+			$bot->message->sendMessage("3 фотографии", $peer_id, $from_id, [
+			    "attachment" => [
+			        $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
+					$bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
+					$bot->message->uploadPhoto(__DIR__ . '/test.jpeg')
+				]
+			]);
+        } elseif ($text == "doc") {
+            /** загрузка фотографии и документа из директории */
+            $bot->message->sendMessage("Фотография и Документ", $peer_id, $from_id, [
+                "attachment" => [
+                    $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
+					$bot->message->uploadDoc(__DIR__ . '/test.jpeg')
+				]
+			]);
+        }
     }
 }
 ```
