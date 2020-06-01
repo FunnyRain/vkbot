@@ -16,18 +16,21 @@ class Wall {
     /**
      * @param string $message
      * @param array $params
-     * @return array
+     * @return array|null
      */
     public function sendComment(string $message = "", array $params = []) {
-        if (!empty($message)) {
-            $params["owner_id"] = -$this->bot->group_id;
-            $params["post_id"] = $this->getPostId();
-            $params["from_group"] = 1;
-            $params["message"] = isset($message) ? self::replaceNameToMessage($this->getFromId(), $message) : null;
-            $params["reply_to_comment"] = $this->getCommentId();
-            $this->bot->console->debug("post_id{$this->getPostId()}> Сообщение отправлено", !empty($message) ? $message : null);
-            return $this->bot->api("wall.createComment", $params);
-        }
+        if (empty($message))
+            return null;
+        
+        $params = [
+            'owner_id' => -$this->bot->group_id,
+            'post_id' => $this->getPostId(),
+            'from_group' => 1,
+            'message' => self::replaceNameToMessage($this->getFromId(), $message),
+            'reply_to_comment' => $this->getCommentId(),
+        ];
+        $this->bot->console->debug("post_id" . $this->getPostId() . "> Сообщение отправлено", $message);
+        return $this->bot->api("wall.createComment", $params);
     }
 
     /**
