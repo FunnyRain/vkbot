@@ -168,6 +168,22 @@ class Control {
         }
     }
 
+    /** utils */
+    public function setOnline() {
+        if (self::api("groups.getOnlineStatus", ["group_id" => $this->group_id])['status'] == 'none') {
+            return self::api("groups.enableOnline", ["group_id" => $this->group_id]);
+        }
+    }
+    public function getShortLink(string $url = "https://google.com", int $private = 0) {
+        $getShortLink = self::api("utils.getShortLink", ["url" => $url, "private" => $private]);
+        if (isset($getShortLink['short_url'])) {
+            return $getShortLink['short_url'];
+        } else {
+            $this->console->warning("Не удалось сократить ссылку", $url);
+            return "";
+        }
+    }
+
     /**
      * @param string $url
      * @return mixed
