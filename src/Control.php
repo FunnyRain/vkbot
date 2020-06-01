@@ -175,12 +175,14 @@ class Control {
         }
     }
     public function getShortLink(string $url = "https://google.com", int $private = 0) {
-        $getShortLink = self::api("utils.getShortLink", ["url" => $url, "private" => $private]);
-        if (isset($getShortLink['short_url'])) {
-            return $getShortLink['short_url'];
-        } else {
-            $this->console->warning("Не удалось сократить ссылку", $url);
-            return "";
+        if (!empty($url)) {
+            $getShortLink = self::api("utils.getShortLink", ["url" => $url, "private" => $private]);
+            if (isset($getShortLink['short_url'])) {
+                return $getShortLink['short_url'];
+            } else {
+                $this->console->warning("Не удалось сократить ссылку", $url);
+                return "";
+            }
         }
     }
 
