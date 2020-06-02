@@ -30,7 +30,7 @@ class Message {
             $params["random_id"] = rand();
             $params["peer_id"] = $peer_id;
             $params["message"] = $peer_id <= 2000000000 ? self::replaceNameToMessage($peer_id, $message) : self::replaceNameToMessage($from_id, $message);
-            if (is_array($params["attachment"])) {
+            if (isset($params["attachment"]) and is_array($params["attachment"])) {
                 $params["attachment"] = implode(",", $params["attachment"]);
             } else {
                 $params["attachment"] = isset($params["attachment"]) ? $params["attachment"] : null;
