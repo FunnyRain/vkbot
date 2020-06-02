@@ -12,6 +12,8 @@ class Control {
     public $v;
     public $get;
     public $debug = 0;
+    //
+    public $page_token;
 
     const ERRORS = [
         1 => "Произошла неизвестная ошибка.",
@@ -79,11 +81,13 @@ class Control {
      * @param string $token
      * @param int $group_id
      * @param float $v
+     * @param string|null $page_token
      */
-    public function __construct(string $token, int $group_id, float $v = 5.102) {
+    public function __construct(string $token, int $group_id, float $v = 5.102, string $page_token = null) {
         $this->token = $token;
         $this->group_id = $group_id;
         $this->v = $v;
+        $this->page_token = $page_token;
         $this->console = new Console($this);
         $this->message = new Message($this);
         $this->wall = new Wall($this);
@@ -247,11 +251,12 @@ class Control {
     /**
      * @param string $method
      * @param array $params
+     * @param bool $is_page
      * @return array
      */
-    public function api(string $method = '', array $params = []) {
+    public function api(string $method = '', array $params = [], bool $is_page = false) {
         $params["v"] = $this->v;
-        $params["access_token"] = $this->token;
+        $params["access_token"] = $is_page === true ? $this->page_token : $this->token;
         $params = http_build_query($params);
         $url = $this->http_build_query($method, $params);
         
