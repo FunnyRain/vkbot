@@ -50,6 +50,16 @@ while (true) {
          */
         if ($action["type"] == "chat_invite_user") {
             if ($action["member_id"] == -$bot->group_id) {
+                if (file_exists(__DIR__ . '/chats.txt')) {
+                    $file = __DIR__ . "/chats.txt";
+                    $data = trim(file_get_contents(__DIR__ . '/chats.txt'));
+                    file_put_contents($file, $data + 1);
+                } else {
+                    $f = fopen(__DIR__ . '/chats.txt', "w") or die("Ошибка записи.");
+                    $txt = "1";
+                    fwrite($f, $txt);
+                    fclose($f);
+                }
                 $bot->message->sendMessage("вы добавили бота (меня) в беседу, всем привет :)", $peer_id, $from_id);
             } else {
                 $message = "привет, {fname} {lname}! тебя добавили в беседу ";
@@ -70,6 +80,24 @@ while (true) {
         $cfg = new Config(__DIR__ . '/users/' . $from_id . '.json', Config::JSON);
         $msg = explode(" ", mb_strtolower($text));
         switch ($msg[0]) {
+            case "рассылка":
+                if (isset($msg[1])) {
+                    $users = array_diff(scandir(__DIR__ . "/users"), array('.', '..'));
+                    $chat = 1;
+                    $count = 2;
+                    $allChats = trim(file_get_contents(__DIR__ . '/chats.txt'));
+                    while ($chat <= $allChats) {
+                        $bot->message->sendMessage($msg[1], 200000000 . $chat, $chat);
+                        $chat++;
+                    }
+                    while (isset($users[$count])) {
+                        $bot->message->sendMessage($msg[1], (int)str_replace(".json", "", $users[$count]), (int)str_replace(".json", "", $users[$count]));
+                        $count++;
+                    }
+                } else {
+                    $bot->message->sendMessage("Вы должны указать сообщение!", $peer_id, $from_id);
+                }
+                break;
             /** Работа с конфигом */
             case "баланс":
                 /** получаем текущий баланс */
