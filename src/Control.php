@@ -13,6 +13,9 @@ class Control {
     public $get;
     public $debug = 0;
     //
+    public $data;
+    public $callback = false;
+    //
     public $page_token;
 
     const ERRORS = [
@@ -94,6 +97,40 @@ class Control {
         $this->wall = new Wall($this);
     }
 
+    /** CallBack */
+    public function setConfirm(string $code) {
+        $this->callback = true;
+        $data = json_decode(file_get_contents('php://input'));
+        if (isset($data->type) && $data->type == 'confirmation') {
+            exit($code);
+        } else $this->data = json_decode(file_get_contents('php://input'));
+    }
+
+    public function ok() {
+        set_time_limit(0);
+        ini_set('display_errors', 0);
+        ob_end_clean();
+
+        // для Nginx
+        if (is_callable('fastcgi_finish_request')) {
+            echo 'ok';
+            session_write_close();
+            fastcgi_finish_request();
+            return true;
+        }
+        // для Apache
+        ignore_user_abort(true);
+
+        ob_start();
+        header('Content-Encoding: none');
+        header('Content-Length: 2');
+        header('Connection: close');
+        echo 'ok';
+        ob_end_flush();
+        flush();
+        return true;
+    }
+
     /**
      * @return array|null
      */
@@ -108,10 +145,10 @@ class Control {
         if (isset($this->get["text"])) {
             if (mb_strpos($this->get["text"], '] '))
                 return (string)explode('] ', $this->get["text"])[1];
-            
+
             return (string)$this->get["text"];
         }
-        
+
         return null;
     }
 
@@ -161,18 +198,28 @@ class Control {
     }
 
     public function start() {
-        $getArray = $this->getRequest();
-        if (isset($getArray["updates"])) {
-            foreach ($getArray["updates"] as $get) {
-                switch ($get["type"]) {
-                    case "message_new":
-                        $this->get = $get["object"];
-                        break;
-                    case "wall_reply_new":
-                        $this->wall->object($get["object"]);
-                        break;
-                    default:
-                        break;
+        if ($this->callback === true) {
+            /* без комментариев.... */
+            $get = [];
+            foreach ($this->data->object as $key => $value) {
+                $get[$key] = $value;
+            }
+            $this->get = $get;
+            $this->ok();
+        } else {
+            $getArray = $this->getRequest();
+            if (isset($getArray["updates"])) {
+                foreach ($getArray["updates"] as $get) {
+                    switch ($get["type"]) {
+                        case "message_new":
+                            $this->get = $get["object"];
+                            break;
+                        case "wall_reply_new":
+                            $this->wall->object($get["object"]);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -184,13 +231,13 @@ class Control {
             return self::api("groups.enableOnline", ["group_id" => $this->group_id]);
         }
     }
-    
+
     public function getShortLink(string $url = "https://google.com", int $private = 0) {
         if (isset($url)) {
             $getShortLink = self::api("utils.getShortLink", ["url" => $url, "private" => $private]);
             if (isset($getShortLink['short_url']))
                 return $getShortLink['short_url'];
-            
+
             $this->console->warning("Не удалось сократить ссылку", $url);
             return "";
         }
@@ -205,7 +252,7 @@ class Control {
             $sendRequest = $this->curl_post($url);
         else
             $sendRequest = file_get_contents($url);
-        
+
         $sendRequest = json_decode($sendRequest, true);
         if (isset($sendRequest["error"])) {
             $error = $sendRequest["error"]["error_code"];
@@ -216,11 +263,11 @@ class Control {
                 $this->console->error("Произошла неизвестная ошибка.");
             }
         }
-        
+
         if (isset($sendRequest["response"])) {
             return $sendRequest["response"];
         }
-        
+
         return $sendRequest;
     }
 
@@ -238,14 +285,14 @@ class Control {
         $url = json_decode(@file_get_contents($this->lp["url"]), 1);
         if (isset($url["updates"]))
             return json_decode(file_get_contents($this->lp["url"]), 1);
-        
+
         $result = $this->getLongPollServer();
         $ts = $result["ts"];
         $key = $result["key"];
         $server = $result["server"];
         $this->lp["url"] = "{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=8&version=3";
         $this->console->log("Ссылка лонгпулла обновлена");
-        
+
         return json_decode(file_get_contents($this->lp["url"]), 1);
     }
 
@@ -260,7 +307,7 @@ class Control {
         $params["access_token"] = $is_page === true ? $this->page_token : $this->token;
         $params = http_build_query($params);
         $url = $this->http_build_query($method, $params);
-        
+
         return (array)$this->call($url);
     }
 
@@ -288,10 +335,10 @@ class Control {
             curl_setopt($curl, CURLOPT_TIMEOUT, 20);
             $out = curl_exec($curl);
             curl_close($curl);
-            
+
             return $out;
         }
-        
+
         return false;
     }
 }

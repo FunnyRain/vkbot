@@ -7,10 +7,13 @@
   - Обработка событий
   - Загрузка документов
   - Обработка стены сообщества (Получение сообщения с комметариев)
+  - LongPoll API
+  - CallBack API
 
 ### Что планируется?
 
   - Рассылка сообщений
+  - Создание виджета
 
 ### Примеры
 
@@ -21,6 +24,7 @@
   - [Обработка событий](https://github.com/FunnyRain/vkbot#%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9-%D0%B2-%D0%B1%D0%B5%D1%81%D0%B5%D0%B4%D0%B0%D1%85)
   - [Загрузка документов](https://github.com/FunnyRain/vkbot#%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8-%D1%84%D0%BE%D1%82%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D0%B8%D0%B8--%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0-%D0%B8%D0%B7-%D0%B4%D0%B8%D1%80%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D0%B8%D0%B8)
   - [Обработка стены сообщества](https://github.com/FunnyRain/vkbot#%D0%BF%D1%80%D0%BE%D1%81%D1%82%D0%BE%D0%B9-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D1%8F-%D0%BA%D0%BE%D0%BC%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%80%D0%B8%D1%8F-%D0%B8-%D0%BE%D1%82%D0%B2%D0%B5%D1%82%D0%B0-%D0%BD%D0%B0-%D0%BD%D0%B5%D0%B3%D0%BE)
+  - [Работа с CallBack API]()
 
 ### Как установить?
 Пиши в консоль:
@@ -288,5 +292,20 @@ while (true) {
 
     }
 }
+```
+###### Простой пример подключения CallBack API
+```php
+require_once __DIR__ . '/autoload.php';
+
+$bot = new Control(
+    "токен",
+    "айди группы (цифрами)",
+);
+$bot->setConfirm("Строка, которую должен вернуть сервер");
+$bot->start();
+$text = $bot->getMessage();
+$from_id = $bot->getFromId();
+$peer_id = $bot->getPeerId();
+$bot->message->sendMessage($text, $peer_id, $from_id);
 ```
 ### Если есть вопросы, пишите [VKontakte](https://vk.com/vyxel)
