@@ -1,5 +1,7 @@
 # VKBOT / Простая библиотека для создания бота
 >Библиотека находится на стадии разработки, но уже юзабельна :grin:
+
+[СПИСОК МЕТОДОВ](https://github.com/FunnyRain/vkbot/blob/master/METHODS.md) - https://github.com/FunnyRain/vkbot/blob/master/METHODS.md
 ### Что есть?
   - Обработка команд
   - Работа с кнопками
