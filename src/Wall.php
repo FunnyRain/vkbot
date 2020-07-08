@@ -34,6 +34,57 @@ class Wall {
     }
 
     /**
+     * @param string $type
+     * @return mixed
+     */
+    private function getWallUploadServer(string $type = "photos") {
+        if ($type === "docs") {
+            return $this->bot->api("{$type}.getWallUploadServer", ["type" => "doc", "group_id" => $this->bot->group_id], true)["upload_url"];
+        } else return $this->bot->api("{$type}.getWallUploadServer", ["group_id" => $this->bot->group_id], true)['upload_url'];
+    }
+
+    /**
+     * @param string $title
+     * @param string $hash
+     * @param string $photo
+     * @param int $server
+     * @return string
+     */
+    private function saveWallPhoto(string $title, string $hash, string $photo, int $server) {
+        $saveWallPhoto = $this->bot->api("photos.saveWallPhoto", [
+            "group_id" => $this->bot->group_id,
+            "hash" => $hash,
+            "photo" => $photo,
+            "server" => $server
+        ], true);
+        $this->bot->console->debug("сохранено");
+        if (!isset($saveWallPhoto["error"])) {
+            return "photo" . $saveWallPhoto[0]["owner_id"] . "_" . $saveWallPhoto[0]["id"];
+        }
+    }
+
+    /**
+     * @param string $src
+     * @return string
+     */
+    public function uploadWallPhoto(string $src) {
+        if (!file_exists($src)) {
+            $this->bot->console->error("Загрузка фотографии невозможна!", "Неверный путь");
+        } else {
+            $server = $this->getWallUploadServer();
+            $file = new CURLFile(realpath($src));
+            $ch = curl_init($server);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, array('photo' => $file));
+            $data = json_decode(curl_exec($ch), 1);
+            curl_close($ch);
+            $this->bot->console->debug("фотография отправлена");
+            return $this->saveWallPhoto("test1", $data['hash'], $data['photo'], $data['server']);
+        }
+    }
+
+    /**
      * @param string $message
      * @param array $params
      */
@@ -44,7 +95,11 @@ class Wall {
             $params['message'] = empty($message) ? "hello world! XD" : $message;
             $params['owner_id'] = isset($params['owner_id']) ? $params['owner_id'] : -$this->bot->group_id;
             $params['from_group'] = isset($params['from_group']) ? $params['from_group'] : 1;
-            // attachments
+            if (isset($params["attachments"]) and is_array($params["attachments"])) {
+                $params["attachments"] = implode(",", $params["attachments"]);
+            } else {
+                $params["attachments"] = isset($params["attachments"]) ? $params["attachments"] : null;
+            }
             $this->bot->api('wall.post', $params, true);
         }
     }
