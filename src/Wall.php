@@ -34,6 +34,22 @@ class Wall {
     }
 
     /**
+     * @param string $message
+     * @param array $params
+     */
+    public function addPost(string $message, array $params = []) {
+        if (!isset($this->bot->page_token)) {
+            $this->bot->console->error("Нельзя сделать пост без токена пользователя! Пример: ", "\$bot = new Control(\n\t\t\"токен\",\n\t\t\"айди группы (цифрами)\",\n\t\t5.102,\n\t\t\"токен пользователя\"\n\t);");
+        } else {
+            $params['message'] = empty($message) ? "hello world! XD" : $message;
+            $params['owner_id'] = isset($params['owner_id']) ? $params['owner_id'] : -$this->bot->group_id;
+            $params['from_group'] = isset($params['from_group']) ? $params['from_group'] : 1;
+            // attachments
+            $this->bot->api('wall.post', $params, true);
+        }
+    }
+
+    /**
      * @param int $uid
      * @param string $message
      * @return string|string[]
