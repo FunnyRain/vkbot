@@ -15,6 +15,8 @@ class Control {
     public $v;
     public $get;
     public $debug = 0;
+    public $temp_datas_message = [];
+    public $temp_datas_wall = [];
     //
     public $is_pagebot = false;
     //
@@ -237,10 +239,22 @@ class Control {
                             $this->callbackbutton = $get['object'];
                             break;
                         case "message_new":
-                            $this->get = $get["object"];
+                            if (!isset($this->temp_datas_message[$get["object"]["peer_id"]])) $this->temp_datas_message[$get["object"]["peer_id"]][] = -1;
+                            if (!in_array($get["object"]["conversation_message_id"], $this->temp_datas_message[$get["object"]["peer_id"]])) {
+                                $this->temp_datas_message[$get["object"]["peer_id"]][] = $get["object"]["conversation_message_id"];
+                                $this->get = $get["object"];
+                            } else {
+                                $this->get = null;
+                            }
                             break;
                         case "wall_reply_new":
-                            $this->wall->object($get["object"]);
+                            if (!isset($this->temp_datas_wall[$get["object"]["post_id"]])) $this->temp_datas_wall[$get["object"]["post_id"]][] = -1;
+                            if (!in_array($get["object"]["id"], $this->temp_datas_wall[$get["object"]["post_id"]])) {
+                                $this->temp_datas_wall[$get["object"]["post_id"]][] = $get["object"]["id"];
+                                $this->wall->object($get["object"]);
+                            } else {
+                                $this->wall->object([]);
+                            }
                             break;
                             default:
                             if ($this->is_pagebot) {

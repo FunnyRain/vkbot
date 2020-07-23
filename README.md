@@ -62,7 +62,6 @@ php Main.php
 ###### Простой пример отправки сообщения на команду "info":
 ```php
 require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
-$mid = [];
 $bot = new Control(
     "токен",
     "айди группы (цифрами)"
@@ -73,19 +72,14 @@ while (true) {
     $message_id = $bot->getMessageId();
     $from_id = $bot->getFromId(); // получаем айди отправителя
     $peer_id = $bot->getPeerId(); // получаем айди переписки
-    if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
-    if (!in_array($message_id, $mid[$peer_id])) {
-        $mid[$peer_id][] = $message_id;
-        if ($text == "info") {
-            $bot->message->sendMessage("Тебя зовут {fname}", $peer_id, $from_id); // отправляем сообщение
-        }
+    if ($text == "info") {
+        $bot->message->sendMessage("Тебя зовут {fname}", $peer_id, $from_id); // отправляем сообщение
     }
 }
 ```
 ###### Простой пример отправки клавиатуры и обработка
 ```php
 require_once __DIR__ . '/autoload.php';
-$mid = [];
 $bot = new Control(
     "токен",
     "айди группы (цифрами)"
@@ -99,25 +93,20 @@ while (true) {
     $payload = $bot->getPayload(); // получаем payload
     $color = new ReflectionClass("Message");
     $color = $color->getConstants();
-    if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
-    if (!in_array($message_id, $mid[$peer_id])) {
-        $mid[$peer_id][] = $message_id;
-        if ($text == "keyboard") {
-            $bot->message->addKeyboard([
-                [$bot->message->addButton(">нажми на меня<", $color['green'], "press_button")]
-            ]); // создаём клавиатуру
-            $bot->message->sendMessage("нажми на кнопочку :)", $peer_id, $from_id, ["keyboard" => $bot->message->getKeyboard()]);
-            // отправляем сообщение с клавиатурой
-        } elseif ($payload == "press_button") {
-            $bot->message->sendMessage("ты нажал на кнопку", $peer_id, $from_id); // отправляем сообщение
-        }
+    if ($text == "keyboard") {
+        $bot->message->addKeyboard([
+            [$bot->message->addButton(">нажми на меня<", $color['green'], "press_button")]
+        ]); // создаём клавиатуру
+        $bot->message->sendMessage("нажми на кнопочку :)", $peer_id, $from_id, ["keyboard" => $bot->message->getKeyboard()]);
+        // отправляем сообщение с клавиатурой
+    } elseif ($payload == "press_button") {
+        $bot->message->sendMessage("ты нажал на кнопку", $peer_id, $from_id); // отправляем сообщение
     }
 }
 ```
 ###### Простой пример вставки Имя / Фамилии в текст сообщения
 ```php
 require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
-$mid = [];
 $bot = new Control(
     "токен",
     "айди группы (цифрами)"
@@ -128,25 +117,20 @@ while (true) {
     $message_id = $bot->getMessageId();
     $from_id = $bot->getFromId(); // получаем айди отправителя
     $peer_id = $bot->getPeerId(); // получаем айди переписки
-    if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
-    if (!in_array($message_id, $mid[$peer_id])) {
-        $mid[$peer_id][] = $message_id;
-        if ($text == "info") {
-            $text = "* {fname} - имя
-            * {lname} - фамилия
-            * {fullname} - имя и фамилия
-            * {afname} - имя в виде ссылки  (т.е кликабельное)
-            * {alname} - фамилия в виде ссылки (т.е кликабельное)
-            * {afullname} - имя и фамилия в виде ссылки (т.е кликабельное)";
-            $bot->message->sendMessage($text, $peer_id, $from_id); // отправляем сообщение
-        }
+    if ($text == "info") {
+        $text = "* {fname} - имя
+        * {lname} - фамилия
+        * {fullname} - имя и фамилия
+        * {afname} - имя в виде ссылки  (т.е кликабельное)
+        * {alname} - фамилия в виде ссылки (т.е кликабельное)
+        * {afullname} - имя и фамилия в виде ссылки (т.е кликабельное)";
+        $bot->message->sendMessage($text, $peer_id, $from_id); // отправляем сообщение
     }
 }
 ```
 ###### Простой пример работы с конфигом
 ```php
 require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
-$mid = [];
 $bot = new Control(
     "токен",
     "айди группы (цифрами)"
@@ -157,47 +141,42 @@ while (true) {
     $message_id = $bot->getMessageId();
     $from_id = $bot->getFromId(); // получаем айди отправителя
     $peer_id = $bot->getPeerId(); // получаем айди переписки
-    if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
-    if (!in_array($message_id, $mid[$peer_id])) {
-        $mid[$peer_id][] = $message_id;
 
-        /** Работа с конфигом, создание данных пользователя
-         * Проверяем папку для хранения данных. Если нету - создаём */
-        if (!is_dir(__DIR__ . '/users/'))
-            @mkdir(__DIR__ . '/users/');
-        /**  Проверяем наличие аккаунта. Если нету - создаём */
-        if (!file_exists(__DIR__ . '/users/' . $from_id . '.json')) {
-            /** Назначаем данные,
-             * id - id пользователя
-             * money - баланс */
-            $cfg = new Config(__DIR__ . '/users/' . $from_id . '.json', Config::JSON, [
-                'id' => $from_id,
-                'money' => 1000
-            ]);
-            $bot->message->sendMessage("аккаунт создан", $peer_id, $from_id);
-        } else $cfg = new Config(__DIR__ . '/users/' . $from_id . '.json');
+    /** Работа с конфигом, создание данных пользователя
+     * Проверяем папку для хранения данных. Если нету - создаём */
+    if (!is_dir(__DIR__ . '/users/'))
+        @mkdir(__DIR__ . '/users/');
+    /**  Проверяем наличие аккаунта. Если нету - создаём */
+    if (!file_exists(__DIR__ . '/users/' . $from_id . '.json')) {
+        /** Назначаем данные,
+         * id - id пользователя
+         * money - баланс */
+        $cfg = new Config(__DIR__ . '/users/' . $from_id . '.json', Config::JSON, [
+            'id' => $from_id,
+            'money' => 1000
+        ]);
+        $bot->message->sendMessage("аккаунт создан", $peer_id, $from_id);
+    } else $cfg = new Config(__DIR__ . '/users/' . $from_id . '.json');
 
-        if ($text == "баланс") {
-            /** получаем текущий баланс */
-            $bot->message->sendMessage("Твой баланс: " . $cfg->get("money"), $peer_id, $from_id);
-        } elseif ($text == "прибавить") {
-            /** прибавляем 100 к текущему балансу */
-            $cfg->set("money", $cfg->get("money") + 100);
-            $cfg->save();
-            $bot->message->sendMessage("+100 к балансу", $peer_id, $from_id);
-        } elseif ($text == "уменьшить") {
-            /** уменьшаем 100 от текущего баланса */
-            $cfg->set("money", $cfg->get("money") - 100);
-            $cfg->save();
-            $bot->message->sendMessage("-100 от балансу", $peer_id, $from_id);
-        }
+    if ($text == "баланс") {
+        /** получаем текущий баланс */
+        $bot->message->sendMessage("Твой баланс: " . $cfg->get("money"), $peer_id, $from_id);
+    } elseif ($text == "прибавить") {
+        /** прибавляем 100 к текущему балансу */
+        $cfg->set("money", $cfg->get("money") + 100);
+        $cfg->save();
+        $bot->message->sendMessage("+100 к балансу", $peer_id, $from_id);
+    } elseif ($text == "уменьшить") {
+        /** уменьшаем 100 от текущего баланса */
+        $cfg->set("money", $cfg->get("money") - 100);
+        $cfg->save();
+        $bot->message->sendMessage("-100 от балансу", $peer_id, $from_id);
     }
 }
 ```
 ###### Простой пример использования событий в беседах
 ```php
 require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
-$mid = [];
 $bot = new Control(
     "токен",
     "айди группы (цифрами)"
@@ -209,31 +188,25 @@ while (true) {
     $from_id = $bot->getFromId(); // получаем айди отправителя
     $peer_id = $bot->getPeerId(); // получаем айди переписки
     $action = $bot->getAction(); // получаем событие
-    if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
-    if (!in_array($message_id, $mid[$peer_id])) {
-        $mid[$peer_id][] = $message_id;
 
-        /**
-         * Обработка событий (в примере Добавление группы в беседу)
-         * https://vk.com/dev/_objects_message (action)
-         */
-        if ($action["type"] == "chat_invite_user") {
-            if ($action["member_id"] == -$bot->group_id) {
-                $bot->message->sendMessage("вы добавили бота (меня) в беседу, всем привет :)", $peer_id, $from_id);
-            } else {
-                $message = "привет, {fname} {lname}! тебя добавили в беседу";
-                $replace = $bot->message->replaceNameToMessage($action["member_id"], $message);
-                $bot->message->sendMessage($replace, $peer_id, $from_id);
-            }
+    /**
+     * Обработка событий (в примере Добавление группы в беседу)
+     * https://vk.com/dev/_objects_message (action)
+     */
+    if ($action["type"] == "chat_invite_user") {
+        if ($action["member_id"] == -$bot->group_id) {
+            $bot->message->sendMessage("вы добавили бота (меня) в беседу, всем привет :)", $peer_id, $from_id);
+        } else {
+            $message = "привет, {fname} {lname}! тебя добавили в беседу";
+            $replace = $bot->message->replaceNameToMessage($action["member_id"], $message);
+            $bot->message->sendMessage($replace, $peer_id, $from_id);
         }
-
     }
 }
 ```
 ###### Простой пример загрузки Фотографии / Документа из директории
 ```php
 require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
-$mid = [];
 $bot = new Control(
     "токен",
     "айди группы (цифрами)"
@@ -244,38 +217,33 @@ while (true) {
     $message_id = $bot->getMessageId();
     $from_id = $bot->getFromId(); // получаем айди отправителя
     $peer_id = $bot->getPeerId(); // получаем айди переписки
-    if (!isset($mid[$peer_id])) $mid[$peer_id][] = -1;
-    if (!in_array($message_id, $mid[$peer_id])) {
-        $mid[$peer_id][] = $message_id;
-        if ($text == "photo") {
-            /** загрузка фотографии из директории */
-            $bot->message->sendMessage("1 фотография", $peer_id, $from_id, [
-                "attachment" => $bot->message->uploadPhoto(__DIR__ . '/test.jpeg')
-            ]);
-            /** загрузка нескольких фотографий из директории */
-            $bot->message->sendMessage("3 фотографии", $peer_id, $from_id, [
-                "attachment" => [
-                    $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
-                    $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
-                    $bot->message->uploadPhoto(__DIR__ . '/test.jpeg')
-                ]
-            ]);
-        } elseif ($text == "doc") {
-            /** загрузка фотографии и документа из директории */
-            $bot->message->sendMessage("Фотография и Документ", $peer_id, $from_id, [
-                "attachment" => [
-                    $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
-                    $bot->message->uploadDoc(__DIR__ . '/test.jpeg')
-                ]
-            ]);
-        }
+    if ($text == "photo") {
+        /** загрузка фотографии из директории */
+        $bot->message->sendMessage("1 фотография", $peer_id, $from_id, [
+            "attachment" => $bot->message->uploadPhoto(__DIR__ . '/test.jpeg')
+        ]);
+        /** загрузка нескольких фотографий из директории */
+        $bot->message->sendMessage("3 фотографии", $peer_id, $from_id, [
+            "attachment" => [
+                $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
+                $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
+                $bot->message->uploadPhoto(__DIR__ . '/test.jpeg')
+            ]
+        ]);
+    } elseif ($text == "doc") {
+        /** загрузка фотографии и документа из директории */
+        $bot->message->sendMessage("Фотография и Документ", $peer_id, $from_id, [
+            "attachment" => [
+                $bot->message->uploadPhoto(__DIR__ . '/test.jpeg'),
+                $bot->message->uploadDoc(__DIR__ . '/test.jpeg')
+            ]
+        ]);
     }
 }
 ```
 ###### Простой пример получения комментария и ответа на него
 ```php
 require_once __DIR__ . '/autoload.php'; // подключаем библиотеку
-$wall = [];
 $bot = new Control(
     "токен",
     "айди группы (цифрами)"
@@ -286,19 +254,13 @@ while (true) {
     $comment_postid = $bot->wall->getPostId();
     $comment_id = $bot->wall->getCommentId();
     $bot->debug(1);
-    if (!isset($wall[$comment_postid])) $wall[$comment_postid][] = -1;
-    if (!in_array($comment_id, $wall[$comment_postid])) {
-
-        $wall[$comment_postid][] = $comment_id;
-        if ($comment_message == "test") {
-            $bot->wall->sendComment("* {fname} - имя
-            * {lname} - фамилия
-            * {fullname} - имя и фамилия
-            * {afname} - имя в виде ссылки  (т.е кликабельное)
-            * {alname} - фамилия в виде ссылки (т.е кликабельное)
-            * {afullname} - имя и фамилия в виде ссылки (т.е кликабельное)");
-        }
-
+    if ($comment_message == "test") {
+        $bot->wall->sendComment("* {fname} - имя
+        * {lname} - фамилия
+        * {fullname} - имя и фамилия
+        * {afname} - имя в виде ссылки  (т.е кликабельное)
+        * {alname} - фамилия в виде ссылки (т.е кликабельное)
+        * {afullname} - имя и фамилия в виде ссылки (т.е кликабельное)");
     }
 }
 ```
