@@ -121,6 +121,22 @@ class Message {
     }
 
     /**
+     * Для этой функции пока нет описания. (Скоро)
+     */
+    public function addCallbackButton(string $text, string $payload = "") {
+        if ($this->keyboard['inline'] == false) {
+            $this->bot->console->error("Требуется параметр inline!");
+        } else {
+            return [
+                'action' => [
+                    'type' => 'callback',
+                    'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+                    'label' => $text]
+            ];
+        }
+    }
+
+    /**
      * @return array
      */
     public function getKeyboard() {

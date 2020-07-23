@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Control
+ */
 class Control {
 
     public $token;
@@ -13,10 +16,14 @@ class Control {
     public $get;
     public $debug = 0;
     //
+    public $is_pagebot = false;
+    //
     public $data;
     public $callback = false;
     //
     public $page_token;
+    //
+    public $callbackbutton = null;
 
     const ERRORS = [
         1 => "Произошла неизвестная ошибка.",
@@ -91,12 +98,17 @@ class Control {
      */
     public function __construct(string $token, int $group_id, float $v = 5.102, string $page_token = null) {
         $this->token = $token;
-        $this->group_id = $group_id;
         $this->v = $v;
         $this->page_token = $page_token;
         $this->console = new Console($this);
         $this->message = new Message($this);
         $this->wall = new Wall($this);
+        if (empty($group_id)) {
+            $this->is_pagebot = true;
+            $this->console->warning("Используется страничная версия бота!", "Некоторые методы могут не работать.");
+        } else {
+            $this->group_id = $group_id;
+        }
     }
 
     /** CallBack */
@@ -190,6 +202,13 @@ class Control {
     }
 
     /**
+     * Для этой функции пока нет описания. (Скоро)
+     */
+    public function getCallbackButton() {
+        return $this->callbackbutton;
+    }
+
+    /**
      * Debug mode
      * @param int $ok
      */
@@ -212,14 +231,59 @@ class Control {
             $getArray = $this->getRequest();
             if (isset($getArray["updates"])) {
                 foreach ($getArray["updates"] as $get) {
+                    if (!isset($get['type'])) $get['type'] = 'aaaaaaaaaa';
                     switch ($get["type"]) {
+                        case "message_event":
+                            $this->callbackbutton = $get['object'];
+                            break;
                         case "message_new":
                             $this->get = $get["object"];
                             break;
                         case "wall_reply_new":
                             $this->wall->object($get["object"]);
                             break;
-                        default:
+                            default:
+                            if ($this->is_pagebot) {
+                                $obj1 = [];
+                                /** Var_Dump:
+                                 * Array (
+                                        [0] => 4 // ? хз что это
+                                        [1] => 4958522 // ? айди сообщения
+                                        [2] => 8243 // ? тоже хз
+                                        [3] => 2000000391 // ? чат
+                                        [4] => 1595506089 // ? как я понял , это время сообщения (unix)
+                                        [5] => test message // ? текст
+                                        [6] => Array ( 
+                                                [from] => 439239695 // ? отправитель
+                                            )
+                                        [7] => Array (
+                                                [attach1_type] => photo // ? тип документа
+                                                [attach1] => 439239695_457251508 // ? документ
+                                            )
+                                        [type] => aaaaaaaaaa // ! это не нужно
+                                    )
+                                 */
+                                $conversation_message_id = !empty($get[1]) ? $get[1] : null;
+                                $peer_id = !empty($get[3]) ? $get[3] : null;
+                                if ($peer_id < 2000000000) {
+                                    $from_id = $peer_id;
+                                } else {
+                                    $from_id = !empty($get[6]) ? $get[6]['from'] : null;
+                                }
+                                $text = !empty($get[5]) ? $get[5] : null;
+                                $attachments = !empty($get[7]) ? $get[7] : null;
+                                if (!empty($get[6])) print_r($get);
+                                $obj1['object'] = [
+                                    'conversation_message_id' => $conversation_message_id,
+                                    'peer_id' => $peer_id,
+                                    'from_id' => $from_id,
+                                    'text' => $text,
+                                    'attachments' => $attachments
+                                ];
+                                $this->get = $obj1['object'];
+                            } else {
+                                // TODO: Неизвестный тип
+                            }
                             break;
                     }
                 }
@@ -277,7 +341,11 @@ class Control {
      * @return array
      */
     public function getLongPollServer() {
-        return $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
+        if ($this->is_pagebot) {
+            return $this->api("messages.getLongPollServer", ["need_pts" => 1]);
+        } else {
+            return $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
+        }
     }
 
     /**
@@ -292,7 +360,11 @@ class Control {
         $ts = $result["ts"];
         $key = $result["key"];
         $server = $result["server"];
-        $this->lp["url"] = "{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=8&version=3";
+        if ($this->is_pagebot) {
+            $this->lp["url"] = "https://{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=2&version=3";
+        } else {
+            $this->lp["url"] = "{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=8&version=3";
+        }
         $this->console->log("Ссылка лонгпулла обновлена");
 
         return json_decode(file_get_contents($this->lp["url"]), 1);
