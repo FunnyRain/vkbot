@@ -74,6 +74,14 @@ class Bot {
     }
 
     /**
+     * Класс дебаггера
+     * @return void
+     */
+    public function getDebugger(): Debugger {
+        return new Debugger($this->vkdata);
+    }
+
+    /**
      * Проверка токена на валид
      * @return void
      */
@@ -111,7 +119,7 @@ class Bot {
                     switch ($updates[count($updates) - 1]['type']) {
                         case 'message_new':
                             $object = $updates[count($updates) - 1]['object'];
-                            $this->vkdata = $object;
+                            $this->vkdata = $object + ['type' => 'message_new'];
                             $listen($object);
                         break;
                     }
@@ -122,7 +130,7 @@ class Bot {
         }
     }
 
-    public function call(string $url): void {
+    public function call(string $url) {
         if (function_exists("curl_init"))
             $sendRequest = $this->curl_post($url);
         else
@@ -186,7 +194,7 @@ class Bot {
         $params = http_build_query($params);
         $url = $this->http_build_query($method, $params);
 
-        return $this->call($url);
+        return (array)$this->call($url);
     }
 
     private function http_build_query(string $method, string $params = ''): string {
