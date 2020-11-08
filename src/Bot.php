@@ -1,13 +1,20 @@
-<?php 
+<?php
 
 class Bot {
 
+    /** Токен */
     public string $token;
+    /** Версия Апи */
     public float $v = 5.102;
+    /** Айди группы */
     public int $group_id;
+    /** Путь до папки */
     public string $source_path = __DIR__;
 
+    /** Временные данные ЛонгПулла */
     public array $lp = [];
+    /** Временные данные ЛонгПулла (Используется для reply('text') и тд) */
+    public array $vkdata;
 
     /**
      * new Bot("токен", "версия ВкАпи", "айди группы")
@@ -28,7 +35,7 @@ class Bot {
      * @param string $token
      * @return void
      */
-    public function setToken(string $token): void{
+    public function setToken(string $token): void {
         $this->token = $token;
     }
 
@@ -37,7 +44,7 @@ class Bot {
      * @param float $v
      * @return void
      */
-    public function setVersion(float $v): void{
+    public function setVersion(float $v): void {
         $this->v = $v;
     }
 
@@ -46,7 +53,7 @@ class Bot {
      * @param int $group_id
      * @return void
      */
-    public function setGroupId(int $group_id): void{
+    public function setGroupId(int $group_id): void {
         $this->group_id = $group_id;
     }
 
@@ -54,27 +61,68 @@ class Bot {
      * Класс логирования
      * @return void
      */
-    public function getLog(): object{
+    public function getLog(): Logger {
         return new Logger();
     }
 
-    public function isValidateToken(): void{
+    /**
+     * Класс сообщения
+     * @return void
+     */
+    public function getMessage(): Messages {
+        return new Messages($this);
+    }
+
+    /**
+     * Проверка токена на валид
+     * @return void
+     */
+    public function isValidateToken(): void {
         $test = $this->api('groups.getById');
         if (isset($test[0]['id']) and $test[0]['type'] == 'group') {
             $this->group_id = $test[0]['id'];
             $this->getLog()->log('Токен рабочий! group_id: ' . $this->group_id);
+            $this->api('groups.setLongPollSettings', [
+                'group_id' => $this->group_id,
+                'enabled' => 1,
+                'api_version' => $this->v,
+                'message_new' => 1,
+            ]);
+            $this->getLog()->log('Настройки Longpoll в группе выставлены автоматически! Ничего менять не нужно');
         } else die($this->getLog()->error('Токен не рабочий!'));
     }
 
-    public function start() {
+    /**
+     * Старт бота
+     * @param [type] $listen
+     * @return void
+     */
+    public function start($listen) {
         if (empty($this->token)) die($this->getLog()->error('Не указан токен!'));
         $this->isValidateToken();
-        // while (true) {
-        //     new Messages($this, $this->getRequest());
-        // }
+        $oldts = 0;
+        while ($data = $this->getRequest()) {
+            if ($data["ts"] > $oldts) {
+                $oldts = $data["ts"];
+
+                //! Тестируется, возможно, не самое лучшее решение.
+                $updates = $data['updates'];
+                if (count($updates) !== 0) {
+                    switch ($updates[count($updates) - 1]['type']) {
+                        case 'message_new':
+                            $object = $updates[count($updates) - 1]['object'];
+                            $this->vkdata = $object;
+                            $listen($object);
+                        break;
+                    }
+                }
+            } else {
+                // ToDo
+            }
+        }
     }
 
-    public function call(string $url) {
+    public function call(string $url): void {
         if (function_exists("curl_init"))
             $sendRequest = $this->curl_post($url);
         else
@@ -98,11 +146,19 @@ class Bot {
         return $sendRequest;
     }
 
-    public function getLongPollServer() {
+    /**
+     * Получение сервера ЛонгПулла
+     * @return array
+     */
+    public function getLongPollServer(): array {
         return $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
     }
 
-    public function getRequest() {
+    /**
+     * Получение всех событий
+     * @return array
+     */
+    public function getRequest(): array {
         $url = json_decode(@file_get_contents($this->lp["url"]), 1);
         if (isset($url["updates"]))
             return json_decode(file_get_contents($this->lp["url"]), 1);
@@ -117,16 +173,23 @@ class Bot {
         return json_decode(file_get_contents($this->lp["url"]), 1);
     }
 
-    public function api(string $method = '', array $params = []) {
+    /**
+     * Выполнение Апи запросов, возвращает Массив.
+     * Список методов: https://vk.com/dev/methods
+     * @param string $method
+     * @param array $params
+     * @return array
+     */
+    public function api(string $method = '', array $params = []): array {
         $params["v"] = $this->v;
         $params["access_token"] = $this->token;
         $params = http_build_query($params);
         $url = $this->http_build_query($method, $params);
 
-        return (array)$this->call($url);
+        return $this->call($url);
     }
 
-    private function http_build_query(string $method, string $params = '') {
+    private function http_build_query(string $method, string $params = ''): string {
         return "https://api.vk.com/method/{$method}?{$params}";
     }
 
