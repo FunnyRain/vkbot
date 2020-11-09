@@ -8,7 +8,11 @@ class Debugger {
         $this->object = $object;
     }
 
-    public function getStickerId() {
+    /**
+     * Выводит айди стикера, который вы отправили боту
+     * @return string   Айди стикера
+     */
+    public function getStickerId(): string {
         $object = $this->object;
         $sticker_ids = "Debugger Result: \n";
         if (isset($object['attachments'])) {

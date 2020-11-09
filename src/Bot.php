@@ -16,6 +16,9 @@ class Bot {
     /** Временные данные ЛонгПулла (Используется для reply('text') и тд) */
     public array $vkdata;
 
+    /** Для групповой беседы  */
+    const PEER_ID = 2000000000;
+
     /**
      * new Bot("токен", "версия ВкАпи", "айди группы")
      * @param [type] ...$args
@@ -116,13 +119,9 @@ class Bot {
                 //! Тестируется, возможно, не самое лучшее решение.
                 $updates = $data['updates'];
                 if (count($updates) !== 0) {
-                    switch ($updates[count($updates) - 1]['type']) {
-                        case 'message_new':
-                            $object = $updates[count($updates) - 1]['object'];
-                            $this->vkdata = $object + ['type' => 'message_new'];
-                            $listen($object);
-                        break;
-                    }
+                    $object = $updates[count($updates) - 1]['object'];
+                    $this->vkdata = $object + ['type' => $updates[count($updates) - 1]['type']];
+                    $listen($object);
                 }
             } else {
                 // ToDo
