@@ -129,6 +129,15 @@ class Bot {
         }
     }
 
+    public function isAction(string $type = 'message_new', $listen) {
+        $object = $this->vkdata;
+        if (isset($object['action'])) {
+            if ($object['action']['type'] == $type) {
+                $listen($object['action']);
+            }
+        }
+    }
+
     public function call(string $url) {
         if (function_exists("curl_init"))
             $sendRequest = $this->curl_post($url);

@@ -4,11 +4,11 @@
 ### Что есть?
   - Bots LongPoll API
   - Обработка команд
+  - Обработка событий
 
 ### Что планируется?
 
   - Работа с кнопками
-  - Обработка событий
   - Загрузка документов
   - Рассылка сообщений
   - Создание виджета
@@ -21,6 +21,25 @@
    - bbbbb
 
 ### Примеры использования
+###### Простой обработки события "Приглашение бота в беседу":
+```php
+<?php require_once 'autoload.php';
+
+$bot = new Bot();
+$bot->setToken('токен');
+
+$bot->start(function($data)use($bot){
+
+    // chat_invite_user - Событие добавления в беседу
+    // Список всех событий: https://vk.com/dev/groups_events
+    $bot->isAction('chat_invite_user', function($data)use($bot) {
+        $msg = $bot->getMessage();
+        if ($data['member_id'] == -$bot->group_id)
+            $msg->reply('спасибо за приглашение');
+    });
+
+});
+```
 ###### Простой пример отправки сообщения на команду "info":
 ```php
 <?php require_once 'autoload.php';
