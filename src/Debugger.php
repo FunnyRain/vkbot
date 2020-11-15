@@ -2,7 +2,7 @@
 
 class Debugger {
 
-    public array $object = [];
+    public $object = [];
 
     public function __construct(array $object) {
         $this->object = $object;

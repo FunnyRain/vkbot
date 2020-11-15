@@ -2,7 +2,7 @@
 
 class Messages {
 
-    public Bot $bot;
+    public $bot;
 
     public function __construct(Bot $bot) {
         $this->bot = $bot;

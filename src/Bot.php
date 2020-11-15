@@ -3,18 +3,18 @@
 class Bot {
 
     /** Токен */
-    public string $token;
+    public $token;
     /** Версия Апи */
-    public float $v = 5.102;
+    public $v = 5.102;
     /** Айди группы */
-    public int $group_id;
+    public $group_id;
     /** Путь до папки */
-    public string $source_path = __DIR__;
+    public $source_path = __DIR__;
 
     /** Временные данные ЛонгПулла */
-    public array $lp = [];
+    public $lp = [];
     /** Временные данные ЛонгПулла (Используется для reply('text') и тд) */
-    public array $vkdata;
+    public $vkdata;
 
     /** Для групповой беседы  */
     const PEER_ID = 2000000000;
@@ -90,7 +90,7 @@ class Bot {
      */
     public function isValidateToken(): void {
         $test = $this->api('groups.getById');
-        if (isset($test[0]['id']) and $test[0]['type'] == 'group') {
+        if (isset($test[0]['id']) and ($test[0]['type'] == 'group' or $test[0]['type'] == 'page')) {
             $this->group_id = $test[0]['id'];
             $this->getLog()->log('Токен рабочий! group_id: ' . $this->group_id);
             $this->api('groups.setLongPollSettings', [

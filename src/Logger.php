@@ -3,11 +3,11 @@
 class Logger {
 
     /** Папка с логами */
-    public string $default_path = __DIR__ . '/../logs/';
+    public $default_path = __DIR__ . '/../logs/';
     /** --------- */
-    public bool $isWrite = false;
+    public $isWrite = false;
     /** --------- */
-    public array $foreground_colors = [
+    public $foreground_colors = [
         "black" => "0;30",
         "dark_gray" => "1;30",
         "light_gray" => "0;37",
@@ -26,7 +26,7 @@ class Logger {
         "white" => "1;37"
     ];
     /** --------- */
-    public array $background_colors = [
+    public $background_colors = [
         "black" => "40",
         "red" => "41",
         "green" => "42",
