@@ -120,7 +120,9 @@ class Bot {
                 $updates = $data['updates'];
                 if (count($updates) !== 0) {
                     $object = $updates[count($updates) - 1]['object'];
-                    $this->vkdata = $object + ['type' => $updates[count($updates) - 1]['type']];
+                    $this->vkdata = (isset($object['message'])) ? $object['message'] + $object['client_info'] +['type' => $updates[count($updates) - 1]['type']]
+                    : $object + ['type' => $updates[count($updates) - 1]['type']];
+                    // $this->vkdata = $object + ['type' => $updates[count($updates) - 1]['type']];
                     $listen($object);
                 }
             } else {
