@@ -18,7 +18,27 @@ class Messages {
         if (isset($object['text']))
             return $object['text'];
     }
+    
+    /**
+     * Получение цыферного айди пользователя
+     * @param array $object
+     * @return integer
+     */
+    public function getUserId(array $object = []): int {
+        if (empty($object)) $object = $this->bot->vkdata;
+        return (isset($object['from_id'])) ? $object['from_id'] : 1;
+    }
 
+    /**
+     * Получение цыферного айди беседы
+     * @param array $object
+     * @return integer
+     */
+    public function getChatId(array $object = []): int {
+        if (empty($object)) $object = $this->bot->vkdata;
+        return (isset($object['peer_id'])) ? $object['peer_id'] : Bot::PEER_ID + 1;
+    }
+    
     /**
      * Быстрый ответ сообщением
      * @param string $text  Сообщение
