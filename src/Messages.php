@@ -18,7 +18,7 @@ class Messages {
         if (isset($object['text']))
             return $object['text'];
     }
-    
+
     /**
      * Получение цыферного айди пользователя
      * @param array $object
@@ -38,7 +38,7 @@ class Messages {
         if (empty($object)) $object = $this->bot->vkdata;
         return (isset($object['peer_id'])) ? $object['peer_id'] : Bot::PEER_ID + 1;
     }
-    
+
     /**
      * Быстрый ответ сообщением
      * @param string $text  Сообщение
@@ -48,12 +48,18 @@ class Messages {
     public function reply(string $text, array $args = []): array {
         if (!isset($text) and !isset($args['attachment']))
             return $this->bot->getLog()->error('Не указан текст!');
-        
-        return $this->bot->api('messages.send', [
+
+        $return = $this->bot->api('messages.send', [
             'random_id' => rand(),
             'peer_id' => isset($args['peer_id']) ? $args['peer_id'] : $this->bot->vkdata['peer_id'],
             'message' => $text
         ] + $args);
+
+        if ($this->bot->kBuilder()->isUseKeyboard) {
+            unset($this->bot->kBuilder()->keyboard);
+            unset($this->bot->kBuilder()->buttons);
+        }
+        return $return;
     }
 
     /**
@@ -83,11 +89,17 @@ class Messages {
         if (preg_match('/(fname|lname|afname|alname|fullname|afullname)/ui', $text))
             $text = $this->replaceNameToMessage(isset($args['from_id']) ? $args['from_id'] : $this->bot->vkdata['from_id'], $text);
 
-        return $this->bot->api('messages.send', [
+        $return = $this->bot->api('messages.send', [
             'random_id' => rand(),
             'peer_ids' => isset($peer_ids) ? $peer_ids : $this->bot->vkdata['peer_id'],
             'message' => $text
         ] + $args);
+
+        if ($this->bot->kBuilder()->isUseKeyboard) {
+            unset($this->bot->kBuilder()->keyboard);
+            unset($this->bot->kBuilder()->buttons);
+        }
+        return $return;
     }
 
     /**

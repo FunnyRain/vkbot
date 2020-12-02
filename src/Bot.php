@@ -62,7 +62,7 @@ class Bot {
 
     /**
      * Класс логирования
-     * @return void
+     * @return Logger
      */
     public function getLog(): Logger {
         return new Logger();
@@ -70,7 +70,7 @@ class Bot {
 
     /**
      * Класс сообщения
-     * @return void
+     * @return Messages
      */
     public function getMessage(): Messages {
         return new Messages($this);
@@ -78,10 +78,18 @@ class Bot {
 
     /**
      * Класс дебаггера
-     * @return void
+     * @return Debugger
      */
     public function getDebugger(): Debugger {
         return new Debugger($this->vkdata);
+    }
+
+    /**
+     * Класс сборщика клавиатуры
+     * @return KeyboardBuilder
+     */
+    public function kBuilder(): KeyboardBuilder {
+        return new KeyboardBuilder($this);
     }
 
     /**
