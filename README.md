@@ -31,6 +31,7 @@ $bot->setToken('токен');
 $bot->start(function($data)use($bot){
 
     $msg = $bot->getMessage();
+    $kb = $bot->kBuilder(); // Подключаем билдера кнопок
     if ($msg->get() == "кнопки") {
         $kb->create(
           [
