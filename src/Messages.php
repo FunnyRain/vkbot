@@ -52,7 +52,13 @@ class Messages {
         $return = $this->bot->api('messages.send', [
             'random_id' => rand(),
             'peer_id' => isset($args['peer_id']) ? $args['peer_id'] : $this->bot->vkdata['peer_id'],
-            'message' => $text
+            'message' => $text,
+            'content_source' => json_encode([
+                'type' => 'message',
+                'owner_id' => $this->getUserId(),
+                'peer_id' => isset($args['peer_id']) ? $args['peer_id'] : $this->bot->vkdata['peer_id'],
+                'conversation_message_id' => $this->bot->vkdata['conversation_message_id']
+            ], JSON_UNESCAPED_UNICODE)
         ] + $args);
 
         if ($this->bot->kBuilder()->isUseKeyboard) {
@@ -92,7 +98,13 @@ class Messages {
         $return = $this->bot->api('messages.send', [
             'random_id' => rand(),
             'peer_ids' => isset($peer_ids) ? $peer_ids : $this->bot->vkdata['peer_id'],
-            'message' => $text
+            'message' => $text,
+            'content_source' => json_encode([
+                'type' => 'message',
+                'owner_id' => $this->getUserId(),
+                'peer_id' => isset($args['peer_id']) ? $args['peer_id'] : $this->bot->vkdata['peer_id'],
+                'conversation_message_id' => $this->bot->vkdata['conversation_message_id']
+            ], JSON_UNESCAPED_UNICODE)
         ] + $args);
 
         if ($this->bot->kBuilder()->isUseKeyboard) {
