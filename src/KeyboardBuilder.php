@@ -117,12 +117,12 @@ class KeyboardBuilder {
 
     /**
      * Убирает клавиатуру из диалога
-     * @return array    Вернет пустую клавиатуру
+     * @return array
      */
-    public function remove(): array {
+    public function remove(): string {
         unset($this->keyboard);
         unset($this->buttons);
-        return ['one_time' => true, 'buttons' => []];
+        return json_encode(['one_time' => true, 'buttons' => []], JSON_UNESCAPED_UNICODE);
     }
 
     static function replaceColor(string $color): string {
