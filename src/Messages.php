@@ -17,8 +17,10 @@ class Messages {
         if (empty($object)) $object = $this->bot->vkdata;
         if (isset($object['text']))
             return $object['text'];
+        else
+            return "";
     }
-    
+
     /**
      * Получение Payload
      * @return string   Вернет payload
@@ -27,6 +29,8 @@ class Messages {
         if (empty($object)) $object = $this->bot->vkdata;
         if (isset($object['payload']))
             return $object['payload'];
+        else
+            return "";
     }
 
     /**
