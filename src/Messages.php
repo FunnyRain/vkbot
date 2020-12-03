@@ -18,6 +18,16 @@ class Messages {
         if (isset($object['text']))
             return $object['text'];
     }
+    
+    /**
+     * Получение Payload
+     * @return string   Вернет payload
+     */
+    public function getPayload(): string {
+        if (empty($object)) $object = $this->bot->vkdata;
+        if (isset($object['payload']))
+            return $object['payload'];
+    }
 
     /**
      * Получение цыферного айди пользователя
