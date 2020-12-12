@@ -9,11 +9,22 @@ class Messages {
     }
 
     /**
-     * Получение сообщения
-     * @param array $object
+     * Получение и Сравнение сообщения
+     * @param array|string $object
      * @return string
      */
-    public function get(array $object = []): string {
+    public function get($object = []): string {
+    		if (!is_array($object)) {
+    			if (substr_count($object, '/') === 2) {
+    				return preg_match($object, (isset($this->bot->vkdata['text'])) ? $this->bot->vkdata['text'] : "");
+    			} else {
+    				if (isset($this->bot->vkdata['text']) and $this->bot->vkdata['text'] == $object)
+    					return true;
+    				else
+    					return false;
+    			}
+    		}
+    		
         if (empty($object)) $object = $this->bot->vkdata;
         if (isset($object['text']))
             return $object['text'];
