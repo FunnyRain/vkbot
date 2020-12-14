@@ -16,3 +16,4 @@ update1.sh
 old/
 logs
 src/sConfig.php
+/vendor/

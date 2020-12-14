@@ -1,0 +1,14 @@
+{
+    "name": "funnyrain/vkbot",
+    "description": "Библиотека для создания бота. Bots LongPoll API. Поддерживает последнюю версию VK API.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "FunnyRain",
+            "email": "terapevt3414334@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
