@@ -2,7 +2,6 @@
     "name": "funnyrain/vkbot",
     "description": "Библиотека для создания бота. Bots LongPoll API. Поддерживает последнюю версию VK API.",
     "type": "library",
-    "version": "2.0.0",
     "license": "MIT",
     "authors": [
         {
@@ -12,7 +11,9 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+	"ext-curl": "*",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {
