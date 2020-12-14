@@ -17,3 +17,5 @@ old/
 logs
 src/sConfig.php
 /vendor/
+composer.lock
+
