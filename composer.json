@@ -9,6 +9,6 @@
             "email": "terapevt3414334@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {}
 }
