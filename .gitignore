@@ -19,3 +19,4 @@ src/sConfig.php
 /vendor/
 composer.lock
 
+php7/
