@@ -45,7 +45,7 @@ $bot->start(function($data)use($bot){
               $kb->link('кнопка с ссылкой', 'http://example.com'),
               $kb->location()
             ] // <-- Конец второй строки 
-          ],
+          ]
           // one_time (По стандарту false),
           // inline (По стандарту false)
         );
