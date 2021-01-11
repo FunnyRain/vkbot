@@ -29,7 +29,7 @@ class KeyboardBuilder {
 
     /**
      * Вывод клавиатуры
-     * @return void Вернет клавиатуру для 'keyboard' в сообщении
+     * Вернет клавиатуру для 'keyboard' в сообщении
      */
     public function get() {
         return json_encode($this->keyboard, JSON_UNESCAPED_UNICODE);
