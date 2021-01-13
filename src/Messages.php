@@ -86,10 +86,6 @@ class Messages {
             ], JSON_UNESCAPED_UNICODE)
         ] + $args);
 
-        if ($this->bot->kBuilder()->isUseKeyboard) {
-            unset($this->bot->kBuilder()->keyboard);
-            unset($this->bot->kBuilder()->buttons);
-        }
         return $return;
     }
 
@@ -132,10 +128,6 @@ class Messages {
             ], JSON_UNESCAPED_UNICODE)
         ] + $args);
 
-        if ($this->bot->kBuilder()->isUseKeyboard) {
-            unset($this->bot->kBuilder()->keyboard);
-            unset($this->bot->kBuilder()->buttons);
-        }
         return $return;
     }
 

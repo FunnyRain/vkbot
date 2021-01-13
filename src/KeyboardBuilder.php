@@ -2,14 +2,8 @@
 
 class KeyboardBuilder {
 
-    public $bot;
     public $keyboard = [];
     public $buttons = [];
-    public $isUseKeyboard = false;
-
-    public function __construct(Bot $bot) {
-        $this->bot = $bot;
-    }
 
     /**
      * Создаёт клавиатуру
@@ -21,6 +15,7 @@ class KeyboardBuilder {
      * @return void             Вернет клавиатуру
      */
     public function create(array $keyboard = [], bool $one_time = false, bool $inline = false) {
+        $this->buttons = [];
         foreach ($keyboard as $kfd => $kv) {
             $this->buttons[] = $kv;
         }

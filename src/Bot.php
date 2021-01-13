@@ -17,6 +17,8 @@ class Bot {
     public $vkdata;
     /** @var Logger */
     private $logger;
+    /** @var KeyboardBuilder */
+    private $builder;
 
     /** Для групповой беседы  */
     const PEER_ID = 2000000000;
@@ -27,6 +29,7 @@ class Bot {
      */
     public function __construct(...$args) {
         $this->logger = new Logger();
+        $this->builder = new KeyboardBuilder();
         if (!empty($args)) {
             foreach ($args as $type) {
                 if (is_string($type)) $this->token = $type;
@@ -92,7 +95,7 @@ class Bot {
      * @return KeyboardBuilder
      */
     public function kBuilder(): KeyboardBuilder {
-        return new KeyboardBuilder($this);
+        return $this->builder;
     }
 
     /**
