@@ -20,6 +20,7 @@ class KeyboardBuilder {
      * @return void             Вернет клавиатуру
      */
     public function create(array $keyboard = [], bool $one_time = false, bool $inline = false) {
+        $this->buttons = [];
         foreach ($keyboard as $kfd => $kv) {
             $this->buttons[] = $kv;
         }
