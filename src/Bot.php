@@ -15,6 +15,8 @@ class Bot {
     public $lp = [];
     /** Временные данные ЛонгПулла (Используется для reply('text') и тд) */
     public $vkdata;
+    /** @var Logger */
+    private $logger;
 
     /** Для групповой беседы  */
     const PEER_ID = 2000000000;
@@ -24,6 +26,7 @@ class Bot {
      * @param [type] ...$args
      */
     public function __construct(...$args) {
+        $this->logger = new Logger();
         if (!empty($args)) {
             foreach ($args as $type) {
                 if (is_string($type)) $this->token = $type;
@@ -65,7 +68,7 @@ class Bot {
      * @return Logger
      */
     public function getLog(): Logger {
-        return new Logger();
+        return $this->logger;
     }
 
     /**
