@@ -2,13 +2,8 @@
 
 class KeyboardBuilder {
 
-    public $bot;
     public $keyboard = [];
     public $buttons = [];
-
-    public function __construct(Bot $bot) {
-        $this->bot = $bot;
-    }
 
     /**
      * Создаёт клавиатуру
