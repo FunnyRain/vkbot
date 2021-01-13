@@ -5,7 +5,6 @@ class KeyboardBuilder {
     public $bot;
     public $keyboard = [];
     public $buttons = [];
-    public $isUseKeyboard = false;
 
     public function __construct(Bot $bot) {
         $this->bot = $bot;
