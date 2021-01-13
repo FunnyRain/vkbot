@@ -193,7 +193,7 @@ class Bot {
     public function getRequest(): array {
         $url = json_decode(@file_get_contents($this->lp["url"]), 1);
         if (isset($url["updates"]))
-            return json_decode(file_get_contents($this->lp["url"]), 1);
+            return $url;
 
         $result = $this->getLongPollServer();
         $ts = $result["ts"];
