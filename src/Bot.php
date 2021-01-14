@@ -242,4 +242,16 @@ class Bot {
 
         return false;
     }
+    
+    private function curlRequest($url)
+    {
+        $myCurl = curl_init();
+        curl_setopt_array($myCurl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true
+        ]);
+        $response = curl_exec($myCurl);
+        
+        return $response;
+    }
 }
