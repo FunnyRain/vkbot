@@ -31,6 +31,12 @@ class Docs
         ]);
     }
     
+    /**
+     * @param string $path
+     * @param string $type
+     * @param $peerId
+     * @return array|false
+     */
     public function getUrlDoc(string $path, string $type, $peerId)
     {
         if (!class_exists('CURLFile', false)) return false;
