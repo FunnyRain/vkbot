@@ -12,7 +12,9 @@ class Bot {
     public $source_path = __DIR__;
 
     /** Временные данные ЛонгПулла */
-    public $lp = [];
+    public $key;
+    public $ts;
+    public $server;
     /** Временные данные ЛонгПулла (Используется для reply('text') и тд) */
     public $vkdata;
     /** @var Logger */
@@ -125,22 +127,25 @@ class Bot {
     public function start($listen) {
         if (empty($this->token)) die($this->getLog()->error('Не указан токен!'));
         $this->isValidateToken();
-        $oldts = 0;
+        $this->getLongPollServer();
+        
         while ($data = $this->getRequest()) {
-            if ($data["ts"] > $oldts) {
-                $oldts = $data["ts"];
-
-                //! Тестируется, возможно, не самое лучшее решение.
-                $updates = $data['updates'];
-                if (count($updates) !== 0) {
-                    $object = $updates[count($updates) - 1]['object'];
-                    $this->vkdata = (isset($object['message'])) ? $object['message'] + $object['client_info'] +['type' => $updates[count($updates) - 1]['type']]
-                    : $object + ['type' => $updates[count($updates) - 1]['type']];
-                    // $this->vkdata = $object + ['type' => $updates[count($updates) - 1]['type']];
-                    $listen($object);
-                }
-            } else {
-                // ToDo
+            if (!isset($data["ts"])) {
+                var_dump($data);
+                $this->getLog()->log("TIMESTAMP не получен...\n");
+                continue;
+            }
+            
+            //! Тестируется, возможно, не самое лучшее решение.
+            $updates = $data['updates'];
+            if (count($updates) == 0) continue;
+            
+            foreach ($updates as $key => $update) {
+                unset($this->vkdata);
+                $object = $updates[$key]['object'];
+                $this->vkdata = (isset($object['message'])) ? $object['message'] + $object['client_info'] + ['type' => $updates[$key]['type']]
+                    : $object + ['type' => $updates[$key]['type']];
+                $listen($object);
             }
         }
     }
@@ -183,7 +188,9 @@ class Bot {
      * @return array
      */
     public function getLongPollServer(): array {
-        return $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
+        $data = $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
+        $this->getLog()->log("Ссылка лонгпулла обновлена\n");
+        list($this->key, $this->server, $this->ts) = [$data['key'], $data['server'], $data['ts']];
     }
 
     /**
@@ -191,18 +198,29 @@ class Bot {
      * @return array
      */
     public function getRequest(): array {
-        $url = json_decode(@file_get_contents($this->lp["url"]), 1);
-        if (isset($url["updates"]))
-            return $url;
+        $result = $this->getData();
+        if (isset($result["failed"])) {
+            if ($result["failed"] == 1) {
+                unset($this->ts);
+                $this->ts = $result["ts"];
+            } else {
+                $this->getLongPollServer();
+                $result = $this->getData();
+            }
+        }
+        
+        $this->ts = $result["ts"];
+        return $result;
+    }
 
-        $result = $this->getLongPollServer();
-        $ts = $result["ts"];
-        $key = $result["key"];
-        $server = $result["server"];
-        $this->lp["url"] = "{$server}?act=a_check&key={$key}&ts={$ts}&wait=25&mode=8&version=3";
-        $this->getLog()->log("Ссылка лонгпулла обновлена");
-
-        return json_decode(file_get_contents($this->lp["url"]), 1);
+    /**
+     * @return mixed
+     */
+    public function getData()
+    {
+        $defult_params = ['act' => 'a_check', 'key' => $this->key, 'ts' => $this->ts, 'wait' => 25];
+        $data = json_decode($this->curlRequest($this->server . '?' . http_build_query($defult_params)), 1);
+        return $data;
     }
 
     /**
