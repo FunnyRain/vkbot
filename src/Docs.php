@@ -21,14 +21,14 @@ class Docs
     /**
      * @param string $type
      * @param $peerId
-     * @return array
+     * @return string
      */
-    public function getUploadServer(string $type, $peerId): array
+    public function getUploadServer(string $type, $peerId): string
     {
         return $this->bot->api("docs.getMessagesUploadServer", [
             "peer_id" => $peerId,
             "type" => $type
-        ]);
+        ])["upload_url"];
     }
     
     /**
@@ -42,7 +42,7 @@ class Docs
         if (!class_exists('CURLFile', false)) return false;
         if (!file_exists($path)) return false;
         
-        $url = $this->getUploadServer($type, $peerId)["upload_url"];
+        $url = $this->getUploadServer($type, $peerId);
         
         $myCurl = curl_init();
         curl_setopt_array($myCurl, [
