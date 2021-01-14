@@ -53,9 +53,7 @@ class Docs
         $response = json_decode(curl_exec($myCurl), 1);
         
         return $this->bot->api("docs.save", [
-                "file" => $response["file"],
-                "access_token" => $this->bot->token,
-                "v" => $this->bot->v
+                "file" => $response["file"]
             ]
         );
     }
