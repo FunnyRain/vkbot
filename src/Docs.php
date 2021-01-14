@@ -31,7 +31,7 @@ class Docs
         ]);
     }
     
-    public function getUrlDoc(string $path, string $type, $peerId): mixed
+    public function getUrlDoc(string $path, string $type, $peerId)
     {
         if (!class_exists('CURLFile', false)) return false;
         if (!file_exists($path)) return false;
@@ -52,13 +52,11 @@ class Docs
         ]);
         $response = json_decode(curl_exec($myCurl), 1);
         
-        return $this->bot->curlRequest("https://api.vk.com/method/docs.save?" . http_build_query(
-                [
-                    "file" => $response["file"],
-                    "access_token" => $this->bot->token,
-                    "v" => $this->bot->v
-                ]
-            )
+        return $this->bot->api("docs.save", [
+                "file" => $response["file"],
+                "access_token" => $this->bot->token,
+                "v" => $this->bot->v
+            ]
         );
     }
 }
