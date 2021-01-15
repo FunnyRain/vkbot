@@ -141,7 +141,6 @@ class Bot {
             if (count($updates) == 0) continue;
             
             foreach ($updates as $key => $update) {
-                unset($this->vkdata);
                 $object = $updates[$key]['object'];
                 $this->vkdata = (isset($object['message'])) ? $object['message'] + $object['client_info'] + ['type' => $updates[$key]['type']]
                     : $object + ['type' => $updates[$key]['type']];
@@ -185,9 +184,8 @@ class Bot {
 
     /**
      * Получение сервера ЛонгПулла
-     * @return array
      */
-    public function getLongPollServer(): array {
+    public function getLongPollServer() {
         $data = $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
         $this->getLog()->log("Ссылка лонгпулла обновлена\n");
         list($this->key, $this->server, $this->ts) = [$data['key'], $data['server'], $data['ts']];
