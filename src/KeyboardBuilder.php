@@ -113,6 +113,22 @@ class KeyboardBuilder {
     }
 
     /**
+     * Кнопка Callback
+     * @param string $text      Текст кнопки
+     * @param string $payload   Дополнительная информация
+     * @return array            Вернет callback кнопку
+     */
+    public function callback(string $text, string $payload = ''): array {
+        return [
+            'action' => [
+                'type' => 'callback',
+                'label' => $text,
+                'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE)
+            ]
+        ];
+    }
+
+    /**
      * Убирает клавиатуру из диалога
      * @return array
      */
