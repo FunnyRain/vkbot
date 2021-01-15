@@ -36,7 +36,7 @@ class Messages {
      * Получение Payload
      * @return string   Вернет payload
      */
-    public function getPayload(): string {
+    public function getPayload($object = []): string {
         if (empty($object)) $object = $this->bot->vkdata;
         if (isset($object['payload']))
             return $object['payload'];
@@ -70,7 +70,7 @@ class Messages {
      * @param array $args   Дополнительные параметры
      * @return array        Вернёт айди сообщения
      */
-    public function reply(string $text, array $args = []): array {
+    public function reply(string $text, array $args = []) {
         if (!isset($text) and !isset($args['attachment']))
             return $this->bot->getLog()->error('Не указан текст!');
 
@@ -110,7 +110,7 @@ class Messages {
      * @param array $args       Дополнительные параметры
      * @return array            Вернёт айди сообщения
      */
-    public function sendMessage(string $text, $peer_ids, array $args = []): array {
+    public function sendMessage(string $text, $peer_ids, array $args = []) {
         if (!isset($text) and !isset($args['attachment']))
             return $this->bot->getLog()->error('Не указан текст!');
         if (preg_match('/(fname|lname|afname|alname|fullname|afullname)/ui', $text))
@@ -150,6 +150,33 @@ class Messages {
             ],
             $text
         );
+    }
+
+    public function edit(string $text, int $conversation_message_id, array $args) {
+        if (!isset($text) or !isset($conversation_message_id))
+            return $this->bot->getLog()->error('Не хватает параметров!');
+
+        $return = $this->bot->api('messages.edit', [
+            'peer_id' => isset($args['peer_id']) ? $args['peer_id'] : $this->bot->vkdata['peer_id'],
+            'message' => $text,
+            'conversation_message_id' => $conversation_message_id
+        ] + $args);
+
+        return $return;
+    }
+
+    public function sendEventAnswer(string $event_id, array $event_data = [], array $args) {
+        if (!isset($event_id) or !isset($event_data))
+            return $this->bot->getLog()->error('Не хватает параметров!');
+
+        $return = $this->bot->api('messages.sendMessageEventAnswer', [
+            'event_id' => $event_id,
+            'user_id' => isset($args['user_id']) ? $args['user_id'] : $this->bot->vkdata['user_id'],
+            'peer_id' => isset($args['peer_id']) ? $args['peer_id'] : $this->bot->vkdata['peer_id'],
+            'event_data' => $event_data
+        ] + $args);
+
+        return $return;
     }
 
     public function getInfo(int $user_id, string $name_case = ""): array {
