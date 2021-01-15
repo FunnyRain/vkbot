@@ -185,9 +185,8 @@ class Bot {
 
     /**
      * Получение сервера ЛонгПулла
-     * @return array
      */
-    public function getLongPollServer(): array {
+    public function getLongPollServer() {
         $data = $this->api("groups.getLongPollServer", ["group_id" => $this->group_id]);
         $this->getLog()->log("Ссылка лонгпулла обновлена\n");
         list($this->key, $this->server, $this->ts) = [$data['key'], $data['server'], $data['ts']];
