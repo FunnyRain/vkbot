@@ -199,14 +199,14 @@ class Config {
             $this->config[$base] = [];
         }
 
-        $base =& $this->config[$base];
+        $base = &$this->config[$base];
 
         while (count($vars) > 0) {
             $baseKey = array_shift($vars);
             if (!isset($base[$baseKey])) {
                 $base[$baseKey] = [];
             }
-            $base =& $base[$baseKey];
+            $base = &$base[$baseKey];
         }
 
         $base = $value;
@@ -252,10 +252,10 @@ class Config {
      * @return array|mixed|null
      */
     public function getPath($path) {
-        $currPath =& $this->config;
+        $currPath = &$this->config;
         foreach (explode(".", $path) as $component) {
             if (isset($currPath[$component])) {
-                $currPath =& $currPath[$component];
+                $currPath = &$currPath[$component];
             } else {
                 $currPath = null;
             }
@@ -268,14 +268,14 @@ class Config {
      * @param $value
      */
     public function setPath($path, $value) {
-        $currPath =& $this->config;
+        $currPath = &$this->config;
         $components = explode(".", $path);
         $final = array_pop($components);
         foreach ($components as $component) {
             if (!isset($currPath[$component])) {
                 $currPath[$component] = [];
             }
-            $currPath =& $currPath[$component];
+            $currPath = &$currPath[$component];
         }
         $currPath[$final] = $value;
     }
@@ -408,5 +408,4 @@ class Config {
             }
         }
     }
-
 }

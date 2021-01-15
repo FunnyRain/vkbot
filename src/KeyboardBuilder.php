@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class KeyboardBuilder {
 
@@ -42,7 +42,8 @@ class KeyboardBuilder {
             'action' => [
                 'type' => 'text',
                 'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
-                'label' => $text],
+                'label' => $text
+            ],
             'color' => self::replaceColor($color)
         ];
     }
@@ -58,7 +59,8 @@ class KeyboardBuilder {
             'action' => [
                 'type' => 'open_link',
                 'link' => $link,
-                'label' => $text]
+                'label' => $text
+            ]
         ];
     }
 
@@ -123,5 +125,4 @@ class KeyboardBuilder {
     static function replaceColor(string $color): string {
         return str_replace(['red', 'green', 'white', 'blue'], ['negative', 'positive', 'default', 'primary'], $color);
     }
-
 }

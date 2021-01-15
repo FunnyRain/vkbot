@@ -85,14 +85,6 @@ class Bot {
     }
 
     /**
-     * Класс дебаггера
-     * @return Debugger
-     */
-    public function getDebugger(): Debugger {
-        return new Debugger($this->vkdata);
-    }
-
-    /**
      * Класс сборщика клавиатуры
      * @return KeyboardBuilder
      */
@@ -128,18 +120,18 @@ class Bot {
         if (empty($this->token)) die($this->getLog()->error('Не указан токен!'));
         $this->isValidateToken();
         $this->getLongPollServer();
-        
+
         while ($data = $this->getRequest()) {
             if (!isset($data["ts"])) {
                 var_dump($data);
                 $this->getLog()->log("TIMESTAMP не получен...\n");
                 continue;
             }
-            
+
             //! Тестируется, возможно, не самое лучшее решение.
             $updates = $data['updates'];
             if (count($updates) == 0) continue;
-            
+
             foreach ($updates as $key => $update) {
                 $object = $updates[$key]['object'];
                 $this->vkdata = (isset($object['message'])) ? $object['message'] + $object['client_info'] + ['type' => $updates[$key]['type']]
@@ -206,7 +198,7 @@ class Bot {
                 $result = $this->getData();
             }
         }
-        
+
         $this->ts = $result["ts"];
         return $result;
     }
@@ -214,8 +206,7 @@ class Bot {
     /**
      * @return mixed
      */
-    public function getData()
-    {
+    public function getData() {
         $defult_params = ['act' => 'a_check', 'key' => $this->key, 'ts' => $this->ts, 'wait' => 25];
         $data = json_decode($this->curlRequest($this->server . '?' . http_build_query($defult_params)), 1);
         return $data;
@@ -258,16 +249,15 @@ class Bot {
 
         return false;
     }
-    
-    private function curlRequest($url)
-    {
+
+    private function curlRequest($url) {
         $myCurl = curl_init();
         curl_setopt_array($myCurl, [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true
         ]);
         $response = curl_exec($myCurl);
-        
+
         return $response;
     }
 }

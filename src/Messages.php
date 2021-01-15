@@ -14,17 +14,17 @@ class Messages {
      * @return string
      */
     public function get($object = []): string {
-    		if (!is_array($object)) {
-    			if (substr_count($object, '/') === 2) {
-    				return preg_match($object, (isset($this->bot->vkdata['text'])) ? $this->bot->vkdata['text'] : "");
-    			} else {
-    				if (isset($this->bot->vkdata['text']) and $this->bot->vkdata['text'] == $object)
-    					return true;
-    				else
-    					return false;
-    			}
-    		}
-    		
+        if (!is_array($object)) {
+            if (substr_count($object, '/') === 2) {
+                return preg_match($object, (isset($this->bot->vkdata['text'])) ? $this->bot->vkdata['text'] : "");
+            } else {
+                if (isset($this->bot->vkdata['text']) and $this->bot->vkdata['text'] == $object)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
         if (empty($object)) $object = $this->bot->vkdata;
         if (isset($object['text']))
             return $object['text'];
@@ -147,10 +147,11 @@ class Messages {
                 "[id{$user_id}|" . $this->getInfo($user_id)['last_name'] . "]",
                 $this->getInfo($user_id)['first_name'] . " " . $this->getInfo($user_id)['last_name'],
                 "[id{$user_id}|" . $this->getInfo($user_id)['first_name'] . " " . $this->getInfo($user_id)['last_name'] . "]",
-            ], $text
+            ],
+            $text
         );
     }
-    
+
     public function getInfo(int $user_id, string $name_case = ""): array {
         return $this->bot->api("users.get", ["user_ids" => $user_id, "name_case" => $name_case])[0];
     }
