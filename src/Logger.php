@@ -110,11 +110,9 @@ class Logger {
      * @return void
      */
     public function debug(string $title = "", string $subtitle = null): void {
-        if ($this->bot->debug == 1) {
-            echo PHP_EOL . $this->color("[Дебаг] > " . date("d.m.y, H:i:s") . "> ", "purple") . $this->color($title, "white");
-            if (isset($subtitle))
-                echo PHP_EOL . "\t" . $this->color($subtitle, "light_purple");
-        }
+        echo PHP_EOL . $this->color("[Дебаг] > " . date("d.m.y, H:i:s") . "> ", "purple") . $this->color($title, "white");
+        if (isset($subtitle))
+            echo PHP_EOL . "\t" . $this->color($subtitle, "light_purple");
     }
 
     /**
