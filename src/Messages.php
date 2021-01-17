@@ -76,7 +76,7 @@ class Messages {
 
         $return = $this->bot->api('messages.send', [
             'random_id' => rand(),
-            'peer_id' => isset($args['peer_id']) ? $args['peer_id'] : $this->bot->vkdata['peer_id'],
+            'peer_ids' => isset($args['peer_ids']) ? $args['peer_ids'] : $this->bot->vkdata['peer_id'],
             'message' => $text,
             'content_source' => json_encode([
                 'type' => 'message',
