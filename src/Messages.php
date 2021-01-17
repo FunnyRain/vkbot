@@ -152,7 +152,7 @@ class Messages {
         );
     }
 
-    public function edit(string $text, int $conversation_message_id, array $args) {
+    public function edit(string $text, int $conversation_message_id, array $args = []) {
         if (!isset($text) or !isset($conversation_message_id))
             return $this->bot->getLog()->error('Не хватает параметров!');
 
@@ -165,7 +165,7 @@ class Messages {
         return $return;
     }
 
-    public function sendEventAnswer(string $event_id, array $event_data = [], array $args) {
+    public function sendEventAnswer(string $event_id, array $event_data = [], array $args = []) {
         if (!isset($event_id) or !isset($event_data))
             return $this->bot->getLog()->error('Не хватает параметров!');
 
