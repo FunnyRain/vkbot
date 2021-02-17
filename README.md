@@ -55,7 +55,7 @@ $bot->start(function($data)use($bot){
 
 });
 ```
-###### Простой обработки события "Приглашение бота в беседу":
+###### Простой пример обработки события "Приглашение бота в беседу":
 ```php
 <?php require_once 'autoload.php';
 
@@ -93,4 +93,4 @@ $bot->start(function($data)use($bot){
 
 });
 ```
-## Если есть вопросы, пишите [VKontakte](https://vk.com/vyxel)
+## Если есть вопросы, пишите [VKontakte](https://vk.com/offnikgay)
