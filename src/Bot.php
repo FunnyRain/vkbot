@@ -98,6 +98,7 @@ class Bot {
      */
     public function isValidateToken(): void {
         $test = $this->api('groups.getById');
+        print_r($test);
         if (isset($test[0]['id']) and ($test[0]['type'] == 'group' or $test[0]['type'] == 'page')) {
             $this->group_id = $test[0]['id'];
             $this->getLog()->log('Токен рабочий! group_id: ' . $this->group_id);
@@ -241,6 +242,8 @@ class Bot {
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $param["query"]);
             curl_setopt($curl, CURLOPT_TIMEOUT, 20);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             $out = curl_exec($curl);
             curl_close($curl);
 
@@ -254,7 +257,9 @@ class Bot {
         $myCurl = curl_init();
         curl_setopt_array($myCurl, [
             CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false
         ]);
         $response = curl_exec($myCurl);
 
