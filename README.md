@@ -93,4 +93,3 @@ $bot->start(function($data)use($bot){
 
 });
 ```
-## Если есть вопросы, пишите [VKontakte](https://vk.com/offnikgay)
